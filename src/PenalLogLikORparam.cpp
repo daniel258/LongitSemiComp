@@ -1,43 +1,48 @@
 #include <RcppArmadillo.h>
 using namespace Rcpp;
-//using namespace arma;
-// arma::vec ExpitModel(double alpha, arma::vec beta, arma::mat X, bool expitInd)
-// {
-//   arma::vec lin = alpha + X * beta;
-//   arma::vec ret = arma::zeros(X.n_rows);
-//   if(expitInd == true)  {
-//      ret = exp(lin)/(1 + exp(lin));
-//    }  else {
-//   ret = exp(lin);
-//   };
-//   return ret;
-// }
 
+// PieceWiseTimes: In terms of J, the points that break the intervals j=1,...,J for the piecewise OR effect,
+//E.g., if PieceWiseTimes= (2, 5,7) then, alphaOR is for the intervals 1-2, 3-5, 6-7 8-Inf
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
-double ParamLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat YT, arma::mat riskNT, arma::mat riskT)
+double PenalLogLikORparam(arma::vec param, arma::mat X, arma::mat YNT,
+                          arma::mat riskNT, arma::mat riskT, arma::mat YT,
+                          arma::mat TimeBase,
+                          arma::mat TimePen, arma::vec lambda,
+                          arma::vec PieceWiseTimes)
      {
   int n = YT.n_rows;
   int J = YT.n_cols;
   int p = X.n_cols;
-  // Rcpp::Rcout << "p= "<< p << std::endl;
+  int Q = TimeBase.n_cols; // Q is the the number of B-splines (number of rows in TimeBase should be J)
+  int NparamsOR = PieceWiseTimes.size();
+  // Rcpp::Rcout << "NparamsORp= "<< p << std::endl;
 // Decomposing "param" to individual paramters as in LogLik
   double gamma = param[0];
   // Rcpp::Rcout << "gamma "<< gamma << std::endl;
   // double alpha0NT = param[1];
   // double alpha0T = param[2];
   // double alpha0OR = param[3];
-  arma::vec alphaNT = param.subvec(1,J);
-  arma::vec alphaT = param.subvec(J+1,2*J);
-  arma::vec alphaOR = param.subvec(2*J+1,3*J);
+ // arma::vec alphaNT = param.subvec(1,J);
+//  arma::vec alphaT = param.subvec(J+1,2*J);
+//  arma::vec alphaOR = param.subvec(2*J+1,3*J);
+  arma::vec alphaNT = param.subvec(1,Q);
+  arma::vec alphaT = param.subvec(Q+1,2*Q);
+  arma::vec alphaOR = param.subvec(2*Q+1,2*Q + NparamsOR);
+  arma::mat penaltermNT = lambda[0] * alphaNT.t() * TimePen * alphaNT;
+  arma::mat penaltermT = lambda[1] * alphaT.t() * TimePen * alphaT;
+//  arma::mat penaltermOR = lambda[2] * alphaOR.t() * TimePen * alphaOR;
+  // Rcpp::Rcout << "penaltermNT "<< penaltermNT << std::endl;
+  // Rcpp::Rcout << "penaltermT "<< penaltermT << std::endl;
+  // Rcpp::Rcout << "penaltermOR "<< penaltermOR << std::endl;
   // Rcpp::Rcout << "alphaNT "<< alphaNT << std::endl;
   // Rcpp::Rcout << "alphaT "<< alphaT << std::endl;
   // Rcpp::Rcout << "alphaOR "<< alphaOR << std::endl;
-  arma::vec betaNT = param.subvec(3*J+1,3*J+p);
+  arma::vec betaNT = param.subvec(2*Q + NparamsOR + 1,2*Q + NparamsOR+p);
   // Rcpp::Rcout << "betaNT "<< betaNT << std::endl;
-  arma::vec betaT = param.subvec(3*J+p+1,3*J+2*p);
+  arma::vec betaT = param.subvec(2*Q + NparamsOR + p + 1,2*Q + NparamsOR + 2*p);
   // Rcpp::Rcout << "betaT "<< betaT << std::endl;
-  arma::vec betaOR = param.subvec(3*J+2*p+1,3*J+3*p);
+  arma::vec betaOR = param.subvec(2*Q + NparamsOR + 2*p + 1,2*Q + NparamsOR + 3*p);
   // Rcpp::Rcout << "betaOR "<< betaOR << std::endl;
   double loglik = 0;
   double iContrib = 0;
@@ -49,60 +54,40 @@ double ParamLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat YT, ar
   double ExpAlphaNTnow = 0;
   double ExpAlphaTnow = 0;
   double ExpAlphaORnow = 0;
-//  LogicalVector NTstatus(n,true);
-//  LogicalVector Tstatus(n,true);
-//  arma::vec YNTnow = arma::zeros(n);
-//  arma::vec YTnow = arma::zeros(n);
-  // double Expalpha0NT = exp();
-  // double Expalpha0T = exp();
-  // double Expalpha0OR = exp();
   arma::vec ExpXBetaNT = exp(X * betaNT);
   arma::vec ExpXBetaT = exp(X * betaT);
   // Rcpp::Rcout << (ExpXBetaT) << std::endl;
   // Rcpp::Rcout << (ExpXBetaNT) << std::endl;
   arma::vec ExpXBetaOR = exp(X * betaOR);
-  arma::vec ExpAlphaNT = exp(alphaNT);
-  arma::vec ExpAlphaT = exp(alphaT);
+  arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
+  arma::vec ExpAlphaT = exp(TimeBase * alphaT);
   arma::vec ExpAlphaOR = exp(alphaOR);
-  //   arma::mat contrib=1 + ps*(exp(beta)-1);
+  bool CondLocation;
+  int PieceTimeNow;
+  int k = 0;
   for (int j = 0; j < J; ++j)
   {
-    //YNTnow = YNT.submat(0, j, n-1, j);
-    //  YTnow = YT.submat(0, j, n-1, j);
     ExpAlphaNTnow = ExpAlphaNT[j];
     ExpAlphaTnow = ExpAlphaT[j];
-    ExpAlphaORnow = ExpAlphaOR[j];
+    if (j > PieceWiseTimes[NparamsOR-1])
+    {
+      PieceTimeNow = PieceWiseTimes[NparamsOR-1];
+    } else {
+      CondLocation = true;
+      k = 0;
+    while(CondLocation == true)
+    {
+      if (j <= PieceWiseTimes[k]-1)
+        {
+        PieceTimeNow = PieceWiseTimes[k];
+        CondLocation = false;
+        }
+      k += 1;
+    }}
+  Rcpp::Rcout << "PieceTimeNow "<< PieceTimeNow << std::endl;
+    ExpAlphaORnow = ExpAlphaOR[PieceTimeNow];
     for (int i = 0; i < n; ++i)
     {
-      // if (j==0) {
-      //   iProb1 = ExpAlphaNTnow*ExpXBetaNT[i]/(1 + (ExpAlphaNTnow*ExpXBetaNT[i]));
-      //   iProb2 = ExpAlphaTnow*ExpXBetaT[i]/(1 + ExpAlphaTnow*ExpXBetaT[i]);
-      //   iOR = ExpAlphaORnow*ExpXBetaOR[i];
-      //   // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
-      //   // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
-      //   // Rcpp::Rcout << "iOR "<< iOR << std::endl;
-      //   if (iOR==1)
-      //   {
-      //     iProb12 = iProb1*iProb2;
-      //   } else {
-      //     iProb12 = (1 + (iProb1 + iProb2)*(iOR - 1) - sqrt(pow(1 + (iProb1 + iProb2)*(iOR - 1), 2.0) -
-      //       4*iOR*(iOR - 1)*iProb1*iProb2)) / (2 * (iOR - 1));
-      //   }
-      //   // Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
-      //   if (YNT(i,0)==1 && YT(i,0)==1) {
-      //     iContrib = log(iProb12);
-      //   }
-      //   if (YNT(i,0)==1 && YT(i,0)==0) {
-      //     iContrib = log(iProb1 - iProb12);
-      //   }
-      //   if (YNT(i,0)==0 && YT(i,0)==1) {
-      //     iContrib = log(iProb2 - iProb12);
-      //   }
-      //   if (YNT(i,0)==0 && YT(i,0)==0) {
-      //     iContrib = log(1 - iProb1 - iProb2 + iProb12);
-      //   }
-      // } else {
-        // if (YT(i,j-1)==1) {
         if (riskT(i,j)==0) {
           iContrib=0;
           //   nocontrib
@@ -146,9 +131,11 @@ double ParamLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat YT, ar
             if (YNT(i,j)==0 && YT(i,j)==0) {
               iContrib = log(1 - iProb1 - iProb2 + iProb12);
             }
-          }}
+          }}}
       // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
       loglik += iContrib;
-    }}
-  return(-loglik);
+    }
+double  penalloglik = loglik - as_scalar(penaltermNT) - as_scalar(penaltermT);
+ // Rcpp::Rcout << "penalloglik "<< penalloglik << std::endl;
+  return(-penalloglik);
      }
