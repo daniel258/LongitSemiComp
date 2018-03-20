@@ -15,11 +15,10 @@ using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
-double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda)
+double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda)
      {
   int n = YT.n_rows;
   int J = YT.n_cols;
-  int p = X.n_cols;
   int Q = TimeBase.n_cols; // Q is the the number of B-splines (number of rows in TimeBase should be J)
   // Rcpp::Rcout << "p= "<< p << std::endl;
 // Decomposing "param" to individual paramters as in LogLik
@@ -43,12 +42,6 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
   // Rcpp::Rcout << "alphaNT "<< alphaNT << std::endl;
   // Rcpp::Rcout << "alphaT "<< alphaT << std::endl;
   // Rcpp::Rcout << "alphaOR "<< alphaOR << std::endl;
-  arma::vec betaNT = param.subvec(3*Q+1,3*Q+p);
-  // Rcpp::Rcout << "betaNT "<< betaNT << std::endl;
-  arma::vec betaT = param.subvec(3*Q+p+1,3*Q+2*p);
-  // Rcpp::Rcout << "betaT "<< betaT << std::endl;
-  arma::vec betaOR = param.subvec(3*Q+2*p+1,3*Q+3*p);
-  // Rcpp::Rcout << "betaOR "<< betaOR << std::endl;
   double loglik = 0;
   double iContrib = 0;
   double iProbTafterNT = 0;
@@ -59,11 +52,6 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
   double ExpAlphaNTnow = 0;
   double ExpAlphaTnow = 0;
   double ExpAlphaORnow = 0;
-  arma::vec ExpXBetaNT = exp(X * betaNT);
-  arma::vec ExpXBetaT = exp(X * betaT);
-  // Rcpp::Rcout << (ExpXBetaT) << std::endl;
-  // Rcpp::Rcout << (ExpXBetaNT) << std::endl;
-  arma::vec ExpXBetaOR = exp(X * betaOR);
   arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
   arma::vec ExpAlphaT = exp(TimeBase * alphaT);
   arma::vec ExpAlphaOR = exp(TimeBase * alphaOR);
@@ -81,7 +69,7 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
           //   nocontrib
         } else {
           if (riskNT(i,j)==0) {
-            iProbTafterNT = (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma))/(1 + (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)));
+            iProbTafterNT = (ExpAlphaTnow*exp(gamma))/(1 + (ExpAlphaTnow*exp(gamma)));
             // Rcpp::Rcout << "ExpAlphaTnow "<< ExpAlphaTnow << std::endl;
             // Rcpp::Rcout << "ExpXBetaT[i] "<< ExpXBetaT[i] << std::endl;
             // Rcpp::Rcout << "exp(gamma) "<< exp(gamma) << std::endl;
@@ -93,9 +81,9 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
               iContrib = log(1-iProbTafterNT);
             }
           } else {
-            iProb1 = ExpAlphaNTnow*ExpXBetaNT[i]/(1 + (ExpAlphaNTnow*ExpXBetaNT[i]));
-            iProb2 = ExpAlphaTnow*ExpXBetaT[i]/(1 + ExpAlphaTnow*ExpXBetaT[i]);
-            iOR = ExpAlphaORnow*ExpXBetaOR[i];
+            iProb1 = ExpAlphaNTnow/(1 + ExpAlphaNTnow);
+            iProb2 = ExpAlphaTnow/(1 + ExpAlphaTnow);
+            iOR = ExpAlphaORnow;
             // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
             // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
             // Rcpp::Rcout << "iOR "<< iOR << std::endl;
