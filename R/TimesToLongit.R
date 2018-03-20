@@ -1,30 +1,39 @@
 # Daniel Nevo
 #inter.vec - interval used for the grouping of the events into longit
-TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec)
+TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, TruncTime = NULL) # TruncTime is the time of entry to the study
 {
   J <- length(inter.vec)-1
   YNT <- YT <- matrix(data = 0, nr = length(T1), nc = J)
   risk.T <- risk.NT <- matrix(data = 1, nr = length(T1), nc = J)
+  if (any(T1 < TruncTime) | any(T2 < TruncTime)) {stop("Data problem: for some observation event time is before truncation time")}
   for (i in 1:length(T1))
   {
-  if(delta1[i]==1)
-  {
-    YNT[i , inter.vec[-1]>=T1[i]] <- 1
-  }
-  if(delta2[i]==1)
-  {
-    YT[i, inter.vec[-1]>=T2[i]] <- 1
-  }
+    if(delta1[i]==1)
+    {
+      YNT[i , inter.vec[-1]>=T1[i]] <- 1
+    }
+    if(delta2[i]==1)
+    {
+      YT[i, inter.vec[-1]>=T2[i]] <- 1
+    }
   indexT1 <- findInterval(T1[i], inter.vec, rightmost.closed = T, left.open = T) + 1
   indexT2 <- findInterval(T2[i], inter.vec, rightmost.closed = T, left.open = T) + 1
   if (indexT1<=J) {risk.NT[i, indexT1:J] <- 0}
   if (indexT2<=J)
-    {
-    risk.NT[i, indexT2:J] <- 0
-    risk.T[i, indexT2:J] <- 0
-    }
-  }
-    return(list(YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
+      {
+      risk.NT[i, indexT2:J] <- 0
+      risk.T[i, indexT2:J] <- 0
+      }
+  if (TruncData == T)
+  {
+  indexTrunc <- findInterval(TruncTime[i], inter.vec, rightmost.closed = T, left.open = T)
+  if (indexTrunc > 1)
+      {
+    risk.NT[i, 1:indexTrunc] <- 0
+    risk.T[i, 1:indexTrunc] <- 0
+      }
+  }}
+  return(list(YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
 }
 
 TimesToInter <- function(T1,T2, delta1, delta2, inter.vec)
