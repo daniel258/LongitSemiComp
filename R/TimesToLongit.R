@@ -26,7 +26,7 @@ TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, Trunc
       }
   if (TruncData == T)
   {
-  indexTrunc <- findInterval(TruncTime[i], inter.vec, rightmost.closed = T, left.open = T)
+  indexTrunc <- findInterval(TruncTime[i], inter.vec, rightmost.closed = T, left.open = T) - 1
   if (indexTrunc > 1)
       {
     risk.NT[i, 1:indexTrunc] <- 0
