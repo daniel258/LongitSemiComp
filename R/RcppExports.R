@@ -5,15 +5,31 @@ OddsRatioTime <- function(YNT, YT, riskNT, riskT) {
     .Call('_LongitSemiComp_OddsRatioTime', PACKAGE = 'LongitSemiComp', YNT, YT, riskNT, riskT)
 }
 
-ParamLogLik <- function(param, X, YNT, YT) {
-    .Call('_LongitSemiComp_ParamLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, YT)
+ParamLogLik <- function(param, X, YNT, YT, riskNT, riskT) {
+    .Call('_LongitSemiComp_ParamLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, YT, riskNT, riskT)
 }
 
-PenalLogLik <- function(param, X, YNT, YT, TimeBase, TimePen, lambda) {
-    .Call('_LongitSemiComp_PenalLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, YT, TimeBase, TimePen, lambda)
+ParamLogLikOLD <- function(param, X, YNT, YT) {
+    .Call('_LongitSemiComp_ParamLogLikOLD', PACKAGE = 'LongitSemiComp', param, X, YNT, YT)
 }
 
-PenalLogLikNoTimeOR <- function(param, X, YNT, YT, TimeBase, TimePen, lambda) {
-    .Call('_LongitSemiComp_PenalLogLikNoTimeOR', PACKAGE = 'LongitSemiComp', param, X, YNT, YT, TimeBase, TimePen, lambda)
+PenalLogLik <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
+    .Call('_LongitSemiComp_PenalLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
+}
+
+PenalLogLikORconst <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
+    .Call('_LongitSemiComp_PenalLogLikORconst', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
+}
+
+PenalLogLikORconstNOBetaOR <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
+    .Call('_LongitSemiComp_PenalLogLikORconstNOBetaOR', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
+}
+
+PenalLogLikORconstNoX <- function(param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
+    .Call('_LongitSemiComp_PenalLogLikORconstNoX', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
+}
+
+PenalLogLikORparam <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, PieceWiseTimes) {
+    .Call('_LongitSemiComp_PenalLogLikORparam', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, PieceWiseTimes)
 }
 

@@ -119,10 +119,10 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
             if (YNT(i,j)==0 && YT(i,j)==0) {
               iContrib = log(1 - iProb1 - iProb2 + iProb12);
             }
-          }}}
+          }}
       // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
       loglik += iContrib;
-    }
+    }}
 double  penalloglik = loglik - as_scalar(penaltermNT) - as_scalar(penaltermT) - as_scalar(penaltermOR);
  // Rcpp::Rcout << "penalloglik "<< penalloglik << std::endl;
   return(-penalloglik);

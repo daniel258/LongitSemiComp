@@ -5,17 +5,16 @@ using namespace Rcpp;
 //E.g., if PieceWiseTimes= (2, 5,7) then, alphaOR is for the intervals 1-2, 3-5, 6-7 8-Inf
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
-double PenalLogLikORparam(arma::vec param, arma::mat X, arma::mat YNT,
+double PenalLogLikORconst(arma::vec param, arma::mat X, arma::mat YNT,
                           arma::mat riskNT, arma::mat riskT, arma::mat YT,
                           arma::mat TimeBase,
-                          arma::mat TimePen, arma::vec lambda,
-                          arma::vec PieceWiseTimes)
+                          arma::mat TimePen, arma::vec lambda)
      {
   int n = YT.n_rows;
   int J = YT.n_cols;
   int p = X.n_cols;
   int Q = TimeBase.n_cols; // Q is the the number of B-splines (number of rows in TimeBase should be J)
-  int NparamsOR = PieceWiseTimes.size();
+  //int NparamsOR = PieceWiseTimes.size();
   // Rcpp::Rcout << "NparamsORp= "<< p << std::endl;
 // Decomposing "param" to individual paramters as in LogLik
   double gamma = param[0];
@@ -28,21 +27,21 @@ double PenalLogLikORparam(arma::vec param, arma::mat X, arma::mat YNT,
 //  arma::vec alphaOR = param.subvec(2*J+1,3*J);
   arma::vec alphaNT = param.subvec(1,Q);
   arma::vec alphaT = param.subvec(Q+1,2*Q);
-  arma::vec alphaOR = param.subvec(2*Q+1,2*Q + NparamsOR);
+  double alphaOR = param[2*Q+1];
   arma::mat penaltermNT = lambda[0] * alphaNT.t() * TimePen * alphaNT;
   arma::mat penaltermT = lambda[1] * alphaT.t() * TimePen * alphaT;
 //  arma::mat penaltermOR = lambda[2] * alphaOR.t() * TimePen * alphaOR;
-  // Rcpp::Rcout << "penaltermNT "<< penaltermNT << std::endl;
-  // Rcpp::Rcout << "penaltermT "<< penaltermT << std::endl;
+ //  Rcpp::Rcout << "penaltermNT "<< penaltermNT << std::endl;
+//   Rcpp::Rcout << "penaltermT "<< penaltermT << std::endl;
   // Rcpp::Rcout << "penaltermOR "<< penaltermOR << std::endl;
   // Rcpp::Rcout << "alphaNT "<< alphaNT << std::endl;
   // Rcpp::Rcout << "alphaT "<< alphaT << std::endl;
   // Rcpp::Rcout << "alphaOR "<< alphaOR << std::endl;
-  arma::vec betaNT = param.subvec(2*Q + NparamsOR + 1,2*Q + NparamsOR+p);
+  arma::vec betaNT = param.subvec(2*Q + 1 + 1,2*Q + 1 + p);
   // Rcpp::Rcout << "betaNT "<< betaNT << std::endl;
-  arma::vec betaT = param.subvec(2*Q + NparamsOR + p + 1,2*Q + NparamsOR + 2*p);
+  arma::vec betaT = param.subvec(2*Q + 1 + p + 1,2*Q + 1 + 2*p);
   // Rcpp::Rcout << "betaT "<< betaT << std::endl;
-  arma::vec betaOR = param.subvec(2*Q + NparamsOR + 2*p + 1,2*Q + NparamsOR + 3*p);
+  arma::vec betaOR = param.subvec(2*Q + 1 + 2*p + 1,2*Q + 1 + 3*p);
   // Rcpp::Rcout << "betaOR "<< betaOR << std::endl;
   double loglik = 0;
   double iContrib = 0;
@@ -53,7 +52,6 @@ double PenalLogLikORparam(arma::vec param, arma::mat X, arma::mat YNT,
   double iProb12 = 0;
   double ExpAlphaNTnow = 0;
   double ExpAlphaTnow = 0;
-  double ExpAlphaORnow = 0;
   arma::vec ExpXBetaNT = exp(X * betaNT);
   arma::vec ExpXBetaT = exp(X * betaT);
   // Rcpp::Rcout << (ExpXBetaT) << std::endl;
@@ -61,34 +59,34 @@ double PenalLogLikORparam(arma::vec param, arma::mat X, arma::mat YNT,
   arma::vec ExpXBetaOR = exp(X * betaOR);
   arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
   arma::vec ExpAlphaT = exp(TimeBase * alphaT);
-  arma::vec ExpAlphaOR = exp(alphaOR);
-  bool CondLocation;
-  int PieceTimeNow;
-  int PieceIntNow;
-  int k = 0;
+  double ExpAlphaOR = exp(alphaOR);
+ // bool CondLocation;
+  // int PieceTimeNow;
+  // int PieceIntNow;
+  // int k = 0;
   for (int j = 0; j < J; ++j)
   {
     ExpAlphaNTnow = ExpAlphaNT[j];
     ExpAlphaTnow = ExpAlphaT[j];
-    if (j > PieceWiseTimes[NparamsOR-1])
-    {
-      PieceIntNow = NparamsOR-1;
-      PieceTimeNow = PieceWiseTimes[PieceIntNow];
-    } else {
-      CondLocation = true;
-      k = 0;
-    while(CondLocation == true)
-    {
-      if (j <= PieceWiseTimes[k]-1)
-        {
-        PieceIntNow = k;
-        PieceTimeNow = PieceWiseTimes[PieceIntNow];
-        CondLocation = false;
-        }
-      k += 1;
-    }}
+    // if (j > PieceWiseTimes[NparamsOR-1])
+    // {
+    //   PieceIntNow = NparamsOR-1;
+    //   PieceTimeNow = PieceWiseTimes[PieceIntNow];
+    // } else {
+    //   CondLocation = true;
+    //   k = 0;
+    // while(CondLocation == true)
+    // {
+    //   if (j <= PieceWiseTimes[k]-1)
+    //     {
+    //     PieceIntNow = k;
+    //     PieceTimeNow = PieceWiseTimes[PieceIntNow];
+    //     CondLocation = false;
+    //     }
+    //   k += 1;
+    // }}
  // Rcpp::Rcout << "PieceTimeNow "<< PieceTimeNow << std::endl;
-    ExpAlphaORnow = ExpAlphaOR[PieceIntNow];
+ //   ExpAlphaORnow = ExpAlphaOR[PieceIntNow];
     for (int i = 0; i < n; ++i)
     {
         if (riskT(i,j)==0) {
@@ -110,7 +108,7 @@ double PenalLogLikORparam(arma::vec param, arma::mat X, arma::mat YNT,
           } else {
             iProb1 = ExpAlphaNTnow*ExpXBetaNT[i]/(1 + (ExpAlphaNTnow*ExpXBetaNT[i]));
             iProb2 = ExpAlphaTnow*ExpXBetaT[i]/(1 + ExpAlphaTnow*ExpXBetaT[i]);
-            iOR = ExpAlphaORnow*ExpXBetaOR[i];
+            iOR = ExpAlphaOR*ExpXBetaOR[i];
             // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
             // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
             // Rcpp::Rcout << "iOR "<< iOR << std::endl;
@@ -135,7 +133,16 @@ double PenalLogLikORparam(arma::vec param, arma::mat X, arma::mat YNT,
               iContrib = log(1 - iProb1 - iProb2 + iProb12);
             }
           }}
-      // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
+        if (arma::is_finite(iContrib)) {} else {
+          bool iORcond = iOR==1;
+       Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
+          Rcpp::Rcout << "j =  "<< j << std::endl;
+          Rcpp::Rcout << "i =  "<< i << std::endl;
+          Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
+          Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
+          Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
+          Rcpp::Rcout << "iOR  "<< iOR << std::endl;
+        Rcpp::Rcout << "iORCOND  "<< iORcond << std::endl;}
       loglik += iContrib;
     }}
 double  penalloglik = loglik - as_scalar(penaltermNT) - as_scalar(penaltermT);
