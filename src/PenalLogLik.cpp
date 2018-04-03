@@ -1,17 +1,5 @@
 #include <RcppArmadillo.h>
 using namespace Rcpp;
-//using namespace arma;
-// arma::vec ExpitModel(double alpha, arma::vec beta, arma::mat X, bool expitInd)
-// {
-//   arma::vec lin = alpha + X * beta;
-//   arma::vec ret = arma::zeros(X.n_rows);
-//   if(expitInd == true)  {
-//      ret = exp(lin)/(1 + exp(lin));
-//    }  else {
-//   ret = exp(lin);
-//   };
-//   return ret;
-// }
 
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
@@ -121,6 +109,15 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
             }
           }}
       // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
+      if (arma::is_finite(iContrib)) {} else {
+        Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
+        Rcpp::Rcout << "j =  "<< j << std::endl;
+        Rcpp::Rcout << "i =  "<< i << std::endl;
+        Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
+        Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
+        Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
+        Rcpp::Rcout << "iOR  "<< iOR << std::endl;}
+//        Rcpp::Rcout << "iORCOND  "<< iORcond << std::endl;}
       loglik += iContrib;
     }}
 double  penalloglik = loglik - as_scalar(penaltermNT) - as_scalar(penaltermT) - as_scalar(penaltermOR);
