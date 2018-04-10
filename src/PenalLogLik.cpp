@@ -109,14 +109,18 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
             }
           }}
       // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
-      if (arma::is_finite(iContrib)) {} else {
-        Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
-        Rcpp::Rcout << "j =  "<< j << std::endl;
-        Rcpp::Rcout << "i =  "<< i << std::endl;
-        Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
-        Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
-        Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
-        Rcpp::Rcout << "iOR  "<< iOR << std::endl;}
+      // if (arma::is_finite(iContrib)) {} else {
+      //   Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
+      //   Rcpp::Rcout << "j =  "<< j << std::endl;
+      //   Rcpp::Rcout << "i =  "<< i << std::endl;
+      //   Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
+      //   Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
+      //   Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
+      //   Rcpp::Rcout << "iOR  "<< iOR << std::endl;
+      //   Rcpp::Rcout << "Risk-NT"<< riskNT(i,j) << std::endl;
+      //   Rcpp::Rcout << "Risk-T  "<< riskT(i,j) << std::endl;
+      //   Rcpp::Rcout << "YNT "<< YNT(i,j) << std::endl;
+      //   Rcpp::Rcout << "YT  "<< YT(i,j) << std::endl;}
 //        Rcpp::Rcout << "iORCOND  "<< iORcond << std::endl;}
       loglik += iContrib;
     }}
