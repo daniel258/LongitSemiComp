@@ -52,17 +52,17 @@ TimesToInter <- function(T1,T2, delta1, delta2, inter.vec)
   }
   return(list(YNT=YNT, YT=YT))
 }
-Rcpp::cppFunction('int FirstOne(NumericVector x) {
-  int index = 0;
-  int length = x.size();
-  for (int i = 0; i < length; i++) {
-            if(x[i]==1) {
-            index = i + 1;
-            break;
-            }}
-            return index;
-            }')
-LongitToTimes <- function(YNT, YT, times) # should add risk at some point, right now it assumes no censoring
+# Rcpp::cppFunction('int FirstOne(NumericVector x) {
+#   int index = 0;
+#   int length = x.size();
+#   for (int i = 0; i < length; i++) {
+#             if(x[i]==1) {
+#             index = i + 1;
+#             break;
+#             }}
+#             return index;
+#             }')
+LongitToTimes <- function(YNT, YT, times) # should add risk set indicator at some point, right now it assumes no censoring or truncation
 {
   n <- nrow(YNT)
   J <- length(times)
