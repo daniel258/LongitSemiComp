@@ -11,6 +11,7 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
   int Q = TimeBase.n_cols; // Q is the the number of B-splines (number of rows in TimeBase should be J)
   // Rcpp::Rcout << "p= "<< p << std::endl;
 // Decomposing "param" to individual paramters as in LogLik
+// Rcpp::Rcout << "param: "<< param << std::endl;
   double gamma = param[0];
   // Rcpp::Rcout << "gamma "<< gamma << std::endl;
   // double alpha0NT = param[1];
@@ -87,7 +88,7 @@ double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT
             // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
             // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
             // Rcpp::Rcout << "iOR "<< iOR << std::endl;
-            if (iOR>0.99 & iOR<1.01)
+            if (iOR>0.9999 & iOR<1.0001)
             {
               iProb12 = iProb1*iProb2;
             } else {
