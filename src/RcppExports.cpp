@@ -85,20 +85,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ParamLogLikOLD
-double ParamLogLikOLD(arma::vec param, arma::mat X, arma::mat YNT, arma::mat YT);
-RcppExport SEXP _LongitSemiComp_ParamLogLikOLD(SEXP paramSEXP, SEXP XSEXP, SEXP YNTSEXP, SEXP YTSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
-    rcpp_result_gen = Rcpp::wrap(ParamLogLikOLD(param, X, YNT, YT));
-    return rcpp_result_gen;
-END_RCPP
-}
 // PenalLogLik
 double PenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda);
 RcppExport SEXP _LongitSemiComp_PenalLogLik(SEXP paramSEXP, SEXP XSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP YTSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP) {
@@ -219,7 +205,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_LongitSemiComp_GradPenalLogLikPers", (DL_FUNC) &_LongitSemiComp_GradPenalLogLikPers, 9},
     {"_LongitSemiComp_OddsRatioTime", (DL_FUNC) &_LongitSemiComp_OddsRatioTime, 4},
     {"_LongitSemiComp_ParamLogLik", (DL_FUNC) &_LongitSemiComp_ParamLogLik, 6},
-    {"_LongitSemiComp_ParamLogLikOLD", (DL_FUNC) &_LongitSemiComp_ParamLogLikOLD, 4},
     {"_LongitSemiComp_PenalLogLik", (DL_FUNC) &_LongitSemiComp_PenalLogLik, 9},
     {"_LongitSemiComp_PenalLogLikNoX", (DL_FUNC) &_LongitSemiComp_PenalLogLikNoX, 8},
     {"_LongitSemiComp_PenalLogLikORconst", (DL_FUNC) &_LongitSemiComp_PenalLogLikORconst, 9},

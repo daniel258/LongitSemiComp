@@ -21,10 +21,6 @@ ParamLogLik <- function(param, X, YNT, YT, riskNT, riskT) {
     .Call('_LongitSemiComp_ParamLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, YT, riskNT, riskT)
 }
 
-ParamLogLikOLD <- function(param, X, YNT, YT) {
-    .Call('_LongitSemiComp_ParamLogLikOLD', PACKAGE = 'LongitSemiComp', param, X, YNT, YT)
-}
-
 PenalLogLik <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
     .Call('_LongitSemiComp_PenalLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
 }
