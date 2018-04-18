@@ -6,6 +6,17 @@
 
 using namespace Rcpp;
 
+// FirstOne
+int FirstOne(NumericVector x);
+RcppExport SEXP _LongitSemiComp_FirstOne(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(FirstOne(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // GradPenalLogLik
 arma::vec GradPenalLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda);
 RcppExport SEXP _LongitSemiComp_GradPenalLogLik(SEXP paramSEXP, SEXP XSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP YTSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP) {
@@ -22,6 +33,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type TimePen(TimePenSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type lambda(lambdaSEXP);
     rcpp_result_gen = Rcpp::wrap(GradPenalLogLik(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// GradPenalLogLikPers
+arma::mat GradPenalLogLikPers(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda);
+RcppExport SEXP _LongitSemiComp_GradPenalLogLikPers(SEXP paramSEXP, SEXP XSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP YTSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type TimeBase(TimeBaseSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type TimePen(TimePenSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(GradPenalLogLikPers(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -184,7 +214,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_LongitSemiComp_FirstOne", (DL_FUNC) &_LongitSemiComp_FirstOne, 1},
     {"_LongitSemiComp_GradPenalLogLik", (DL_FUNC) &_LongitSemiComp_GradPenalLogLik, 9},
+    {"_LongitSemiComp_GradPenalLogLikPers", (DL_FUNC) &_LongitSemiComp_GradPenalLogLikPers, 9},
     {"_LongitSemiComp_OddsRatioTime", (DL_FUNC) &_LongitSemiComp_OddsRatioTime, 4},
     {"_LongitSemiComp_ParamLogLik", (DL_FUNC) &_LongitSemiComp_ParamLogLik, 6},
     {"_LongitSemiComp_ParamLogLikOLD", (DL_FUNC) &_LongitSemiComp_ParamLogLikOLD, 4},
