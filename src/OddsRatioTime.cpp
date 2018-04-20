@@ -3,6 +3,7 @@ using namespace Rcpp;
 
 
 //// [[Rcpp::depends(RcppArmadillo)]]
+//' @export
 // [[Rcpp::export]]
 List OddsRatioTime(NumericMatrix YNT, NumericMatrix YT, NumericMatrix riskNT, NumericMatrix riskT)
      {

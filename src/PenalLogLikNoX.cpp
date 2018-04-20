@@ -1,19 +1,8 @@
 #include <RcppArmadillo.h>
 using namespace Rcpp;
-//using namespace arma;
-// arma::vec ExpitModel(double alpha, arma::vec beta, arma::mat X, bool expitInd)
-// {
-//   arma::vec lin = alpha + X * beta;
-//   arma::vec ret = arma::zeros(X.n_rows);
-//   if(expitInd == true)  {
-//      ret = exp(lin)/(1 + exp(lin));
-//    }  else {
-//   ret = exp(lin);
-//   };
-//   return ret;
-// }
 
 // [[Rcpp::depends(RcppArmadillo)]]
+//' @export
 // [[Rcpp::export]]
 double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda)
      {

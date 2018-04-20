@@ -1,3 +1,4 @@
+#' @export
 MargORtoJoint <- function(p1marg, p2marg, OR)
 {
   p12 <- ifelse(OR > 0.999 & OR < 1.001, p1marg*p2marg,
@@ -11,6 +12,7 @@ MargORtoJoint <- function(p1marg, p2marg, OR)
   return(prob)
 }
 # J - number of time points
+#' @export
 SimLongitDataParam <- function(n.sample, J,  gamma,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
 {
  p <- length(beta.nt)
@@ -59,6 +61,7 @@ SimLongitDataParam <- function(n.sample, J,  gamma,  alpha.nt, alpha.t, alpha.or
  return(list(X =X, YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
 }
 
+#' @export
 SimLongitDataSmooth <- function(n.sample, times = 1:100,  gamma,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
 {
   if (length(alpha.nt) != length(times)) {stop("alpha.nt should be in the same length as times")}
@@ -118,7 +121,7 @@ SimLongitDataSmooth <- function(n.sample, times = 1:100,  gamma,  alpha.nt, alph
   return(list(X =X, YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
 }
 
-
+#' @export
 SimLongitDataSmoothNoX <- function(n.sample, times = 1:100,  gamma,  alpha.nt, alpha.t, alpha.or)
 {
   J <- length(times)

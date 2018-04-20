@@ -1,5 +1,6 @@
 # Daniel Nevo
 #inter.vec - interval used for the grouping of the events into longit
+#' @export
 TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, TruncTime = NULL) # TruncTime is the time of entry to the study
 {
   J <- length(inter.vec)-1
@@ -35,7 +36,7 @@ TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, Trunc
   }}
   return(list(YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
 }
-
+#' @export
 TimesToInter <- function(T1,T2, delta1, delta2, inter.vec)
 {
   YNT <- YT <- rep(Inf, length(T1))
@@ -62,6 +63,7 @@ TimesToInter <- function(T1,T2, delta1, delta2, inter.vec)
 #             }}
 #             return index;
 #             }')
+#' @export
 LongitToTimes <- function(YNT, YT, times) # should add risk set indicator at some point, right now it assumes no censoring or truncation
 {
   n <- nrow(YNT)
