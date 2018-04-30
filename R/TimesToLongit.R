@@ -1,5 +1,6 @@
 # Daniel Nevo
 #inter.vec - interval used for the grouping of the events into longit
+#'@useDynLib LongitSemiComp
 #' @export
 TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, TruncTime = NULL) # TruncTime is the time of entry to the study
 {
