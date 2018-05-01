@@ -4,7 +4,7 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @export
 // [[Rcpp::export]]
-arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat XNT, arma::mat XT, arma::mat XOR,  arma::mat TimeBase, arma::mat TimePen, arma::vec lambda)
+arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat XNT, arma::mat XT, arma::mat XOR,  arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
      {
   int n = YT.n_rows;
   int J = YT.n_cols;
@@ -116,7 +116,7 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
             // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
             // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
             // Rcpp::Rcout << "iOR "<< iOR << std::endl;
-            if (iOR>0.9999 & iOR<1.0001)
+            if (iOR > 1 - epsOR & iOR < 1 + epsOR)
             {
               iProb12 = iProb1*iProb2;
               // Rcpp::Rcout << "Small OR:  "<< iOR << std::endl;
