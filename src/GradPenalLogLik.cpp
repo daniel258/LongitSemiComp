@@ -294,7 +294,7 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
       }
       for (int k =0; k < pT; ++k)
       {
-      iGrad[3*Q + pT + k + 1] = ((XT(i,k)*iProb2*(1 - iProb2)/(1 - iProb1 - iProb2 + iProb12))) *(0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij - 1);
+      iGrad[3*Q + pNT + k + 1] = ((XT(i,k)*iProb2*(1 - iProb2)/(1 - iProb1 - iProb2 + iProb12))) *(0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij - 1);
       }
       for (int k =0; k < pOR; ++k)
       {

@@ -40,24 +40,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // GradPenalLogLikPers
-arma::mat GradPenalLogLikPers(arma::vec param, arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR);
-RcppExport SEXP _LongitSemiComp_GradPenalLogLikPers(SEXP paramSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP YTSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP, SEXP epsORSEXP) {
+arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR);
+RcppExport SEXP _LongitSemiComp_GradPenalLogLikPers(SEXP paramSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP YTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP, SEXP epsORSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XNT(XNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XT(XTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XOR(XORSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XNT(XNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XT(XTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XOR(XORSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type TimeBase(TimeBaseSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type TimePen(TimePenSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< double >::type epsOR(epsORSEXP);
-    rcpp_result_gen = Rcpp::wrap(GradPenalLogLikPers(param, XNT, XT, XOR, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, epsOR));
+    rcpp_result_gen = Rcpp::wrap(GradPenalLogLikPers(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR));
     return rcpp_result_gen;
 END_RCPP
 }

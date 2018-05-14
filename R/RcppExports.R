@@ -12,8 +12,8 @@ GradPenalLogLik <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBas
 }
 
 #' @export
-GradPenalLogLikPers <- function(param, XNT, XT, XOR, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, epsOR) {
-    .Call('_LongitSemiComp_GradPenalLogLikPers', PACKAGE = 'LongitSemiComp', param, XNT, XT, XOR, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, epsOR)
+GradPenalLogLikPers <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradPenalLogLikPers', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
 }
 
 #' @export

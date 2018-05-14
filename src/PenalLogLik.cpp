@@ -113,53 +113,59 @@ double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskN
           }
         }}
       //Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
-      if (arma::is_finite(iContrib)) {} else {
-        Rcpp::Rcout << "params "<< param << std::endl;
-        Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
-        Rcpp::Rcout << "j =  "<< j+1 << std::endl;
-        Rcpp::Rcout << "i =  "<< i+1 << std::endl;
-        Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
-        Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
-        Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
-        Rcpp::Rcout << "iOR  "<< iOR << std::endl;
-        Rcpp::Rcout << "ExpAlphaTnow  "<< ExpAlphaTnow << std::endl;
-        Rcpp::Rcout << "ExpAlphaNTnow  "<< ExpAlphaNTnow << std::endl;
-        Rcpp::Rcout << "ExpAlphaORnow  "<< ExpAlphaORnow << std::endl;
-        Rcpp::Rcout << "ExpXBetaNT  "<< ExpXBetaNT[i] << std::endl;
-        Rcpp::Rcout << "ExpXBetaT  "<< ExpXBetaT[i] << std::endl;
-        Rcpp::Rcout << "ExpXBetaOR  "<< ExpXBetaOR[i] << std::endl;
-        Rcpp::Rcout << "BetaOR  "<< betaOR << std::endl;
-     //   Rcpp::Rcout << "XOR  "<< m1(span(from, to), span::all) << std::endl;
-        Rcpp::Rcout << "Risk-NT"<< riskNT(i,j) << std::endl;
-        Rcpp::Rcout << "Risk-T  "<< riskT(i,j) << std::endl;
-        Rcpp::Rcout << "YNT "<< YNT(i,j) << std::endl;
-        Rcpp::Rcout << "YT  "<< YT(i,j) << std::endl;}
-      if (iOR < 20 & iOR > 0.01 ) {} else {
-        if (iContrib==0) {} else {
-        Rcpp::Rcout << "params "<< param << std::endl;
-        Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
-        Rcpp::Rcout << "j =  "<< j+1 << std::endl;
-        Rcpp::Rcout << "i =  "<< i+1 << std::endl;
-        Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
-        Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
-        Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
-        Rcpp::Rcout << "iOR  "<< iOR << std::endl;
-        Rcpp::Rcout << "ExpAlphaTnow  "<< ExpAlphaTnow << std::endl;
-        Rcpp::Rcout << "ExpAlphaNTnow  "<< ExpAlphaNTnow << std::endl;
-        Rcpp::Rcout << "ExpAlphaORnow  "<< ExpAlphaORnow << std::endl;
-        Rcpp::Rcout << "ExpXBetaNT  "<< ExpXBetaNT[i] << std::endl;
-        Rcpp::Rcout << "ExpXBetaT  "<< ExpXBetaT[i] << std::endl;
-        Rcpp::Rcout << "ExpXBetaOR  "<< ExpXBetaOR[i] << std::endl;
-        Rcpp::Rcout << "BetaOR  "<< betaOR << std::endl;
-        //   Rcpp::Rcout << "XOR  "<< m1(span(from, to), span::all) << std::endl;
-        Rcpp::Rcout << "Risk-NT"<< riskNT(i,j) << std::endl;
-        Rcpp::Rcout << "Risk-T  "<< riskT(i,j) << std::endl;
-        Rcpp::Rcout << "YNT "<< YNT(i,j) << std::endl;
-        Rcpp::Rcout << "YT  "<< YT(i,j) << std::endl;}}
+      //if (arma::is_finite(iContrib)) {} else {
+      //  Rcpp::Rcout << "params "<< param << std::endl;
+        //Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
+     //    Rcpp::Rcout << "j =  "<< j+1 << std::endl;
+     //    Rcpp::Rcout << "i =  "<< i+1 << std::endl;
+     //    Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
+     //    Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
+     //    Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
+     //    Rcpp::Rcout << "iOR  "<< iOR << std::endl;
+     //    Rcpp::Rcout << "ExpAlphaTnow  "<< ExpAlphaTnow << std::endl;
+     //    Rcpp::Rcout << "ExpAlphaNTnow  "<< ExpAlphaNTnow << std::endl;
+     //    Rcpp::Rcout << "ExpAlphaORnow  "<< ExpAlphaORnow << std::endl;
+     //    Rcpp::Rcout << "ExpXBetaNT  "<< ExpXBetaNT[i] << std::endl;
+     //    Rcpp::Rcout << "ExpXBetaT  "<< ExpXBetaT[i] << std::endl;
+     //    Rcpp::Rcout << "ExpXBetaOR  "<< ExpXBetaOR[i] << std::endl;
+     //    Rcpp::Rcout << "BetaOR  "<< betaOR << std::endl;
+     // //   Rcpp::Rcout << "XOR  "<< m1(span(from, to), span::all) << std::endl;
+     //    Rcpp::Rcout << "Risk-NT"<< riskNT(i,j) << std::endl;
+     //    Rcpp::Rcout << "Risk-T  "<< riskT(i,j) << std::endl;
+     //    Rcpp::Rcout << "YNT "<< YNT(i,j) << std::endl;
+     //    Rcpp::Rcout << "YT  "<< YT(i,j) << std::endl;}
+      // if (iOR < 20 & iOR > 0.01 ) {} else {
+      //   if (iContrib==0) {} else {
+      //   Rcpp::Rcout << "params "<< param << std::endl;
+      //   Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
+      //   Rcpp::Rcout << "j =  "<< j+1 << std::endl;
+      //   Rcpp::Rcout << "i =  "<< i+1 << std::endl;
+      //   Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
+      //   Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
+      //   Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
+      //   Rcpp::Rcout << "iOR  "<< iOR << std::endl;
+      //   Rcpp::Rcout << "ExpAlphaTnow  "<< ExpAlphaTnow << std::endl;
+      //   Rcpp::Rcout << "ExpAlphaNTnow  "<< ExpAlphaNTnow << std::endl;
+      //   Rcpp::Rcout << "ExpAlphaORnow  "<< ExpAlphaORnow << std::endl;
+      //   Rcpp::Rcout << "ExpXBetaNT  "<< ExpXBetaNT[i] << std::endl;
+      //   Rcpp::Rcout << "ExpXBetaT  "<< ExpXBetaT[i] << std::endl;
+      //   Rcpp::Rcout << "ExpXBetaOR  "<< ExpXBetaOR[i] << std::endl;
+      //   Rcpp::Rcout << "BetaOR  "<< betaOR << std::endl;
+      //   //   Rcpp::Rcout << "XOR  "<< m1(span(from, to), span::all) << std::endl;
+      //   Rcpp::Rcout << "Risk-NT"<< riskNT(i,j) << std::endl;
+      //   Rcpp::Rcout << "Risk-T  "<< riskT(i,j) << std::endl;
+      //   Rcpp::Rcout << "YNT "<< YNT(i,j) << std::endl;
+      //   Rcpp::Rcout << "YT  "<< YT(i,j) << std::endl;}}
       //        Rcpp::Rcout << "iORCOND  "<< iORcond << std::endl;}
       loglik += iContrib;
     }}
-  double  penalloglik = loglik - as_scalar(penaltermNT) - as_scalar(penaltermT) - as_scalar(penaltermOR);
+  // Rcpp::Rcout << "loglik "<< loglik << std::endl;
+  // if (isnan(loglik) |  !arma::is_finite(loglik)) {
+  //  loglik = -pow(10,10);}
+  // Rcpp::Rcout << "param "<< param.t() << std::endl;
+  //    Rcpp::Rcout << "loglik "<< loglik << std::endl;
+
+    double  penalloglik = loglik - as_scalar(penaltermNT) - as_scalar(penaltermT) - as_scalar(penaltermOR);
   // Rcpp::Rcout << "penalloglik "<< penalloglik << std::endl;
   return(-penalloglik);
 }
