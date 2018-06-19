@@ -31,9 +31,6 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                     TimeBase = Bsplines,
                     TimePen = S.penal, lambda = lambda)
   fit <- list()
-  fit$NT.varnames <- colnames(XNTmat)
-  fit$T.varnames <- colnames(XTmat)
-  fit$OR.varnames <- colnames(XORmat)
   fit$Bsplines <- Bsplines
   fit$optim.conv <- res.opt$convergence
   fit$est <- res.opt$par
@@ -59,9 +56,15 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$se.rob.NT <- fit$se.rob[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
   fit$se.rob.T <- fit$se.rob[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
   fit$se.rob.OR <- fit$se.rob[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
-  names(fit$coef.NT) <- names(fit$se.rob.NT) <- colnames(XNTmat)
-  names(fit$coef.T) <- names(fit$se.rob.T) <- colnames(XTmat)
-  names(fit$coef.OR) <- names(fit$se.rob.OR) <- colnames(XORmat)
+  if (pNT==1) {
+    names(fit$coef.NT) <- names(fit$se.rob.NT) <- all.vars(formula.NT)} else {
+    names(fit$coef.NT) <- names(fit$se.rob.NT) <- colnames(XNTmat)}
+  if (pT==1) {
+    names(fit$coef.T) <- names(fit$se.rob.T) <- all.vars(formula.T)} else {
+      names(fit$coef.T) <- names(fit$se.rob.T) <- colnames(XTmat)}
+  if (pOR==1) {
+    names(fit$coef.OR) <- names(fit$se.rob.OR) <- all.vars(formula.OR)} else {
+      names(fit$coef.OR) <- names(fit$se.rob.OR) <- colnames(XORmat)}
   class(fit) <- "LongitSC"
   fit
 }
