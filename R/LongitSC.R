@@ -60,6 +60,8 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$se.rob.T <- fit$se.rob[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
   fit$se.rob.OR <- fit$se.rob[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
   names(fit$coef.NT) <- names(fit$se.rob.NT) <- colnames(XNTmat)
+  names(fit$coef.T) <- names(fit$se.rob.T) <- colnames(XTmat)
+  names(fit$coef.OR) <- names(fit$se.rob.OR) <- colnames(XORmat)
   class(fit) <- "LongitSC"
   fit
 }
