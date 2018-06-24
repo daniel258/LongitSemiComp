@@ -39,7 +39,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$Bsplines <- Bsplines
   fit$optim.conv <- res.opt$convergence
   fit$est <- res.opt$par
-  fit$penal.lik <- res.opt$value
+  fit$penal.lik <- -res.opt$value
   fit$hess.penal <- res.opt$hessian
   fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
   my.grad.sqrd <- GradPenalLogLikPers(param = res.opt$par, epsOR = epsOr,
@@ -61,7 +61,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   } else {
     fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
   }
-  fit$aic <- -2*fit$penal.lik + fit$df
+  fit$aic <- 2*fit$penal.lik - 2*fit$df
   fit$coef.longterm <-  fit$est[1]
   fit$time.int.NT <- expit(Bsplines%*%fit$est[2:(1 + Q)])
   fit$time.int.T <- expit(Bsplines%*%fit$est[(1 + Q + 1):(1 + 2*Q)])
