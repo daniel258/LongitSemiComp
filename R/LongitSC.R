@@ -1,15 +1,18 @@
+#' @export
 LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR, data, epsOr = 10^(-10),
                      knots = NULL, lambda = 0, init = NULL, maxit.optim = 50000)
 {
-  m <- match.call()
-  if (is.null(knots)) m$knots <- 5
+  #m <- match.call()
+  if (is.null(knots)) knots <- 5
   XNTmat <- model.matrix(formula.NT, data = data)[, -1] %>% as.matrix
   XTmat <- model.matrix(formula.T, data = data)[, -1] %>% as.matrix
   XORmat <- model.matrix(formula.OR, data = data)[, -1] %>% as.matrix
-  if(length(lambda)==1) m$lambda <- rep(lambda, 3)
-  m$J <- ncol(longit.data$YNT)
-  if (is.null(times)) times <- 1:m$J
-  smooth.aux <- mgcv::smooth.construct.ps.smooth.spec(mgcv::s(times,bs="ps", k = m$knots), data = list(times = times),
+  if(length(lambda)==1) lambda <- rep(lambda, 3)
+  if(length(lambda)!=3) stop("Length of 1ambda should be either one or three")
+  #m$J <- ncol(longit.data$YNT)
+  J <- ncol(longit.data$YNT)
+  if (is.null(times)) times <- 1:J
+  smooth.aux <- mgcv::smooth.construct.ps.smooth.spec(mgcv::s(times,bs="ps", k = knots), data = list(times = times),
                                                       knots = list(times = c(min(times),max(times))))
   S.penal <- smooth.aux$S[[1]]
   Bsplines <- smooth.aux$X
