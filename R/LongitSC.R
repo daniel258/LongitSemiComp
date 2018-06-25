@@ -4,9 +4,9 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
 {
  # m <- match.call()
   if (is.null(knots)) knots <- 5
-  XNTmat <- model.matrix(formula.NT, data = data)[, -1] %>% as.matrix
-  XTmat <- model.matrix(formula.T, data = data)[, -1] %>% as.matrix
-  XORmat <- model.matrix(formula.OR, data = data)[, -1] %>% as.matrix
+  XNTmat <- as.matrix(model.matrix(formula.NT, data = data)[, -1])
+  XTmat <- as.matrix(model.matrix(formula.T, data = data)[, -1])
+  XORmat <- as.matrix(model.matrix(formula.OR, data = data)[, -1])
   if(length(lambda)==1) lambda <- rep(lambda, 3)
   if(length(lambda)!=3) stop("lambda should be of length 1 or 3")
   J <- ncol(longit.data$YNT)
