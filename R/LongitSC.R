@@ -66,7 +66,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   } else {
     fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
   }
-  fit$aic <- 2*fit$lik - 2*fit$df # Need to fix that and rerun simulations - this includes the penalty and I need the acutal lik
+  fit$aic <- 2*fit$lik - 2*fit$df # fit is the likelihood without the peanlty
   fit$coef.longterm <-  fit$est[1]
   fit$time.int.NT <- expit(Bsplines%*%fit$est[2:(1 + Q)])
   fit$time.int.T <- expit(Bsplines%*%fit$est[(1 + Q + 1):(1 + 2*Q)])
