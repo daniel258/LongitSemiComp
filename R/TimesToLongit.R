@@ -1,6 +1,7 @@
 # Daniel Nevo
 #inter.vec - interval used for the grouping of the events into longit
-#'@useDynLib LongitSemiComp
+#'@useDynLib LongitSemiComp # I want this in the namespace, can be moved to other files if this script is deleted
+#'@importFrom Rcpp evalCpp # I want this in the namespace, can be moved to other files if this script is deleted
 #' @export
 TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, TruncTime = NULL) # TruncTime is the time of entry to the study
 {
