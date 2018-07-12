@@ -40,8 +40,8 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$optim.conv <- res.opt$convergence
   fit$est <- res.opt$par
   fit$penal.lik <- -res.opt$value 
-  fit$lik <- PenalLogLik(param = fit$est, XNT = XNTmat, XT = XTmat, XOR = XORmat,
-                         YNT = longit.data$YNT, YT = longit.data$YT,
+  fit$lik <- PenalLogLik(param = fit$est, epsOR = epsOr, XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                         YNT = longit.data$YNT, YT = longit.data$YT, 
                          riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                          TimeBase = Bsplines,
                          TimePen = S.penal, lambda = rep(0,3)) # used for aic
