@@ -62,7 +62,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   #                                 YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
   #                                 TimeBase = Bsplines,  TimePen = S.penal, lambda = lambda)
   if(!identical(dim(hess.no.penal), dim(res.opt$hessian))) {
-    fit$df <- 0 # Indicate a problem
+    fit$df <- 0 # Indicates a problem
   } else {
     fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
   }
@@ -78,6 +78,26 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$se.rob.NT <- fit$se.rob[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
   fit$se.rob.T <- fit$se.rob[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
   fit$se.rob.OR <- fit$se.rob[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
+  # calculate ci for the baseline prob.T1, prob.T2 and OR.
+  # Using the appropoiate transformation of the CI for B%*%alpha
+  sub.vhat.NT <- fit$v.hat[2:(1 + Q), 2:(1 + Q)]
+  sub.vhat.T <- fit$v.hat[(1 + Q + 1):(1 + 2*Q), (1 + Q + 1):(1 + 2*Q)]
+  sub.vhat.OR <- fit$v.hat[(1 + 2*Q + 1):(1 + 3*Q), (1 + 2*Q + 1):(1 + 3*Q)]
+  fit$ci.L.alpha.NT <- expit(Bsplines%*%fit$est[2:(1 + Q)] - 
+                           qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.NT%*%t(Bsplines))))
+  fit$ci.H.alpha.NT <- expit(Bsplines%*%fit$est[2:(1 + Q)] +
+                           qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.NT%*%t(Bsplines))))
+  fit$ci.L.alpha.T <- expit(Bsplines%*%fit$est[(1 + Q + 1):(1 + 2*Q)] - 
+                           qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.T%*%t(Bsplines))))
+  fit$ci.H.alpha.T <- expit(Bsplines%*%fit$est[(1 + Q + 1):(1 + 2*Q)] +
+                           qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.T%*%t(Bsplines))))
+  fit$ci.L.alpha.OR <- exp(Bsplines%*%fit$est[(1 + 2*Q + 1):(1 + 3*Q)] - 
+                          qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.OR%*%t(Bsplines))))
+  fit$ci.H.alpha.OR <- exp(Bsplines%*%fit$est[(1 + 2*Q + 1):(1 + 3*Q)] +
+                          qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.OR%*%t(Bsplines))))
+  # fit$ci.base.NT <- c(ci.L.alpha.NT, ci.H.alpha.NT)
+  # fit$ci.base.T <- c(ci.L.alpha.T, ci.H.alpha.T)
+  # fit$ci.base.OR <- c(ci.L.alpha.OR, ci.H.alpha.OR)
   if (pNT==1) {
     names(fit$coef.NT) <- names(fit$se.rob.NT) <- all.vars(formula.NT)} else {
       names(fit$coef.NT) <- names(fit$se.rob.NT) <- colnames(XNTmat)}

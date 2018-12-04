@@ -113,7 +113,7 @@ double PenalLogLikORconstNOBetaOR(arma::vec param, arma::mat X, arma::mat YNT,
             // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
             // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
             // Rcpp::Rcout << "iOR "<< iOR << std::endl;
-            if (iOR>0.99 & iOR<1.01)
+            if ((iOR>0.99) & (iOR<1.01))
             {
               iProb12 = iProb1*iProb2;
             } else {

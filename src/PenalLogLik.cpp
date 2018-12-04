@@ -65,7 +65,7 @@ double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskN
           // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
           // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
           // Rcpp::Rcout << "iOR "<< iOR << std::endl;
-          if (iOR > 1 - epsOR & iOR < 1 + epsOR)
+          if ((iOR > 1 - epsOR) & (iOR < 1 + epsOR))
           {
             iProb12 = iProb1*iProb2;
           } else {

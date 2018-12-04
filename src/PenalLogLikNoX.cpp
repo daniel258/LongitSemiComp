@@ -76,8 +76,7 @@ double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::ma
             // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
             // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
             // Rcpp::Rcout << "iOR "<< iOR << std::endl;
-            if (iOR>0.99 & iOR<1.01)
-            {
+            if ((iOR>0.99) & (iOR<1.01))            {
               iProb12 = iProb1*iProb2;
             } else {
               iProb12 = (1 + (iProb1 + iProb2)*(iOR - 1) - sqrt(pow(1 + (iProb1 + iProb2)*(iOR - 1), 2.0) -

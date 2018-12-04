@@ -64,7 +64,7 @@ double PenalLogLikORconstNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, a
             iProb1 = ExpAlphaNTnow/(1 + ExpAlphaNTnow);
             iProb2 = ExpAlphaTnow/(1 + ExpAlphaTnow);
             iOR = ExpAlphaOR;
-            if (iOR>0.99 & iOR<1.01)
+            if ((iOR>0.99) & (iOR<1.01))
             {
               iProb12 = iProb1*iProb2;
             } else {
