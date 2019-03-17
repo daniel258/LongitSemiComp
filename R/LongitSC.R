@@ -1,5 +1,7 @@
 #' @export
-LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, data, epsOr = 10^(-10),
+LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, 
+                     formula.inter.gamma = NULL,
+                     data, epsOr = 10^(-10),
                      knots = NULL, lambda = 0, init = NULL, maxit.optim = 50000)
 {
  # m <- match.call()
@@ -9,22 +11,29 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     pNT <- ncol(XNTmat)
   } else {
     XNTmat <- NULL
-    pNT==0
+    pNT <- 0
     }
   if (!is.null(formula.T)) {
     XTmat <- as.matrix(model.matrix(formula.T, data = data)[, -1])
     pT <- ncol(XTmat)
   } else {
     XTmat <- NULL
-    pT==0
+    pT <- 0
     }
   if (!is.null(formula.OR)) {
     XORmat <- as.matrix(model.matrix(formula.OR, data = data)[, -1])
     pOR <- ncol(XORmat)
   } else {
     XORmat <- NULL
-    pOR==0
-    }
+    pOR <- 0
+  }
+  if (!is.null(formula.inter.gamma)) {
+    XinterMat <- as.matrix(model.matrix(formula.inter.gamma, data = data)[, -1])
+    p.inter.gamma <- ncol(XinterMat)
+  } else {
+    XinterMat <- NULL
+    p.inter.gamma <- 0
+  }
   # XNTmat <- as.matrix(model.matrix(formula.NT, data = data)[, -1])
   # XTmat <- as.matrix(model.matrix(formula.T, data = data)[, -1])
   # XORmat <- as.matrix(model.matrix(formula.OR, data = data)[, -1])
@@ -40,8 +49,9 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   # pNT <- ncol(XNTmat)
   # pT <- ncol(XTmat)
   # pOR <- ncol(XORmat)
+  
   p <- pNT + pT + pOR
-  n.params <- 1 + 3*Q + p
+  n.params <- 1 + 3*Q + p + p.inter.gamma
   if (is.null(init))
   {
     init <- rep(0,n.params)
@@ -49,7 +59,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   if (pOR==0) {
     res.opt <- optim(par = init, fn = PenalLogLikNullModelOR, gr = GradPenalLogLikNullModelOR, hessian = T,
                      control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOr,
-                     XNT = XNTmat, XT = XTmat, #XOR = XORmat,
+                     XNT = XNTmat, XT = XTmat, #XOR = XORmat, 
                      YNT = longit.data$YNT, YT = longit.data$YT,
                      riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                      TimeBase = Bsplines,
@@ -58,6 +68,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$formula.NT <- formula.NT
     fit$formula.T <- formula.T
     fit$formula.OR <- formula.OR
+    fit$formula.inter.gamma <- formula.inter.gamma
     fit$Bsplines <- Bsplines
     fit$optim.conv <- res.opt$convergence
     fit$est <- res.opt$par
@@ -108,7 +119,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   } else {
   res.opt <- optim(par = init, fn = PenalLogLik, gr = GradPenalLogLik, hessian = T,
                    control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOr,
-                   XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                   XNT = XNTmat, XT = XTmat, XOR = XORmat, XinterMat = XinterMat,
                    YNT = longit.data$YNT, YT = longit.data$YT,
                    riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                    TimeBase = Bsplines,
@@ -117,11 +128,13 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$formula.NT <- formula.NT
   fit$formula.T <- formula.T
   fit$formula.OR <- formula.OR
+  fit$formula.inter.gamma <- formula.inter.gamma
   fit$Bsplines <- Bsplines
   fit$optim.conv <- res.opt$convergence
   fit$est <- res.opt$par
   fit$penal.lik <- -res.opt$value 
   fit$lik <- PenalLogLik(param = fit$est, epsOR = epsOr, XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                         XinterMat = XinterMat,
                          YNT = longit.data$YNT, YT = longit.data$YT, 
                          riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                          TimeBase = Bsplines,
@@ -130,18 +143,18 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
   my.grad.sqrd <- GradPenalLogLikPers(param = res.opt$par, epsOR = epsOr,
                                       XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                                      XinterMat = XinterMat,
                                       YNT = longit.data$YNT, YT = longit.data$YT,
                                       riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                                       TimeBase = Bsplines,
                                       TimePen = S.penal, lambda = lambda)
   fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
   fit$se.rob <- sqrt(diag(fit$v.hat))
-  hess.no.penal <- numDeriv::hessian(func = PenalLogLik, x = res.opt$par, epsOR = epsOr,XNT = XNTmat, XT = XTmat, XOR = XORmat,
+  hess.no.penal <- numDeriv::hessian(func = PenalLogLik, x = res.opt$par, epsOR = epsOr,
+                                     XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                                     XinterMat = XinterMat,
                                      YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                                      TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
-  # hess.penal <- numDeriv::hessian(func = PenalLogLik, x = res.opt$par, epsOR = epsOr,XNT = XNTmat, XT = XTmat, XOR = XORmat,
-  #                                 YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
-  #                                 TimeBase = Bsplines,  TimePen = S.penal, lambda = lambda)
   if(!identical(dim(hess.no.penal), dim(res.opt$hessian))) {
     fit$df <- 0 # Indicates a problem
   } else {
@@ -155,10 +168,12 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   fit$coef.NT <- fit$est[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
   fit$coef.T <- fit$est[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
   fit$coef.OR <- fit$est[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
+  fit$coef.inter.longterm <- fit$est[(1 + 3*Q + pNT + pT + pOR + 1):(1 + 3*Q + pNT + pT + pOR + p.inter.gamma)]
   fit$se.longterm <- fit$se.rob[1]
   fit$se.rob.NT <- fit$se.rob[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
   fit$se.rob.T <- fit$se.rob[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
   fit$se.rob.OR <- fit$se.rob[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
+  fit$se.rob.longterm.inter <- fit$se.rob[(1 + 3*Q + pNT + pT + pOR + 1):(1 + 3*Q + pNT + pT + pOR + p.inter.gamma)]
 }
   # calculate ci for the baseline prob.T1, prob.T2 and OR.
   # Using the appropoiate transformation of the CI for B%*%alpha
@@ -189,6 +204,9 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   if (pOR==1) {
     names(fit$coef.OR) <- names(fit$se.rob.OR) <- all.vars(formula.OR)} else {
       names(fit$coef.OR) <- names(fit$se.rob.OR) <- colnames(XORmat)}
+  if (p.inter.gamma==1) {
+    names(fit$coef.inter.longterm) <- names(fit$se.rob.longterm.inter) <- all.vars(formula.inter.gamma)} else {
+      names(fit$coef.inter.longterm) <- names(fit$se.rob.longterm.inter) <- colnames(XinterMat)}
   class(fit) <- "LongitSC"
   fit
 }
