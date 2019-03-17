@@ -14,7 +14,7 @@ double PenalLogLikNullModelOR(arma::vec param, arma::mat YT, arma::mat YNT, arma
   int pNT = XNT.n_cols;
   int pT = XT.n_cols;
   //int pOR = XOR.n_cols;
-  int pOR = 0;
+  //int pOR = 0;
   int Q = TimeBase.n_cols; // Q is the the number of B-splines (number of rows in TimeBase should be J)
   // Decomposing "param" to individual paramters 
   double gamma = param[0];

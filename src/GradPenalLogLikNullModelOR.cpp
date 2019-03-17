@@ -4,13 +4,16 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @export
 // [[Rcpp::export]]
-arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat XNT, arma::mat XT, arma::mat XOR,  arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
+arma::vec GradPenalLogLikNullModelOR(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, 
+                                     arma::mat YT, arma::mat XNT, arma::mat XT,// arma::mat XOR,  
+                                     arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
      {
   int n = YT.n_rows;
   int J = YT.n_cols;
   int pNT = XNT.n_cols;
   int pT = XT.n_cols;
-  int pOR = XOR.n_cols;
+  //int pOR = XOR.n_cols;
+  int pOR = 0;
   int Q = TimeBase.n_cols;
   // Q is the the number of B-splines (number of rows in TimeBase should be J)
   // Rcpp::Rcout << "p= "<< p << std::endl;
@@ -39,7 +42,7 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
   // Rcpp::Rcout << "betaNT "<< betaNT << std::endl;
   arma::vec betaT = param.subvec(3*Q + pNT + 1,3*Q + pNT + pT);
   // Rcpp::Rcout << "betaT "<< betaT << std::endl;
-  arma::vec betaOR = param.subvec(3*Q + pNT + pT + 1,3*Q + pNT + pT + pOR);
+ // arma::vec betaOR = param.subvec(3*Q + pNT + pT + 1,3*Q + pNT + pT + pOR);
   // Rcpp::Rcout << "betaOR "<< betaOR << std::endl;
   arma::vec Grad(1 + 3*Q + pNT + pT + pOR);
   arma::vec iGrad(1 + 3*Q + pNT + pT + pOR);
@@ -61,7 +64,7 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
   arma::vec ExpXBetaT = exp(XT * betaT);
   // Rcpp::Rcout << (ExpXBetaT) << std::endl;
   // Rcpp::Rcout << (ExpXBetaNT) << std::endl;
-  arma::vec ExpXBetaOR = exp(XOR * betaOR);
+  //arma::vec ExpXBetaOR = exp(XOR * betaOR);
   arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
   // Rcpp::Rcout << (ExpAlphaNT) << std::endl;
   arma::vec ExpAlphaT = exp(TimeBase * alphaT);
@@ -112,7 +115,8 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
           } else {
             iProb1 = ExpAlphaNTnow*ExpXBetaNT[i]/(1 + (ExpAlphaNTnow*ExpXBetaNT[i]));
             iProb2 = ExpAlphaTnow*ExpXBetaT[i]/(1 + ExpAlphaTnow*ExpXBetaT[i]);
-            iOR = ExpAlphaORnow*ExpXBetaOR[i];
+            iOR = ExpAlphaORnow;
+            // iOR = ExpAlphaORnow*ExpXBetaOR[i];
             // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
             // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
             // Rcpp::Rcout << "iOR "<< iOR << std::endl;
@@ -136,10 +140,11 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
                  {
                    iGrad[3*Q + pNT + k + 1] = XT(i,k)*(1 - iProb2);
                  }
-                 for (int k =0; k < pOR; ++k)
-                 {
-                   iGrad[3*Q + pNT + pT + k + 1] = 0;
-                 }}
+                 // for (int k =0; k < pOR; ++k)
+                 // {
+                 //   iGrad[3*Q + pNT + pT + k + 1] = 0;
+                 // }
+                 }
                if (YNT(i,j)==1 && YT(i,j)==0) {
                  for (int q=0; q < Q; ++q)
                  {
@@ -156,10 +161,11 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
                  {
                    iGrad[3*Q + pNT + k + 1] = -XT(i,k)*iProb2;
                  }
-                 for (int k = 0; k < pOR; ++k)
-                 {
-                   iGrad[3*Q + pNT + pT + k + 1] =  0;
-                 }}
+                 // for (int k = 0; k < pOR; ++k)
+                 // {
+                 //   iGrad[3*Q + pNT + pT + k + 1] =  0;
+                 // }
+                 }
                if (YNT(i,j)==0 && YT(i,j)==1) {
                  for (int q = 0; q < Q; ++q)
                  {
@@ -176,10 +182,11 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
                  {
                    iGrad[3*Q + pNT + k + 1] = XT(i,k)*(1 - iProb2);
                  }
-                 for (int k =0; k < pOR; ++k)
-                 {
-                   iGrad[3*Q + pNT + pT + k + 1] =  0;
-                 }}
+                 // for (int k =0; k < pOR; ++k)
+                 // {
+                 //   iGrad[3*Q + pNT + pT + k + 1] =  0;
+                 // }
+                 }
                if (YNT(i,j)==0 && YT(i,j)==0) {
                  for (int q=0; q < Q; ++q)
                  {
@@ -196,10 +203,11 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
                  {
                    iGrad[3*Q + pNT + k + 1] = -XT(i,k)*iProb2;
                   }
-                   for (int k =0; k < pOR; ++k)
-                   {
-                   iGrad[3*Q + pNT + pT + k + 1] =  0;
-                  }}
+                  //  for (int k =0; k < pOR; ++k)
+                  //  {
+                  //  iGrad[3*Q + pNT + pT + k + 1] =  0;
+                  // }
+                   }
             } else {
               cij = (iProb1 + iProb2)*(iOR - 1);
               nuij = sqrt(pow(1 + cij, 2.0) - 4*iOR*(iOR - 1)*iProb1*iProb2);
@@ -224,12 +232,13 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
               {
                 iGrad[3*Q + pNT + k + 1] = 0.5*XT(i,k)*iProb2*(1 - iProb2) * (nuij - 1 - cij + 2*iOR*iProb1)/(nuij*iProb12);
               }
-              for (int k =0; k < pOR; ++k)
-              {
-                iGrad[3*Q + pNT + pT + k + 1] = XOR(i,k)*iOR*
-                  (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
-                  (2*(iOR - 1)*(iOR - 1)*iProb12);
-              }}
+              // for (int k =0; k < pOR; ++k)
+              // {
+              //   iGrad[3*Q + pNT + pT + k + 1] = XOR(i,k)*iOR*
+              //     (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
+              //     (2*(iOR - 1)*(iOR - 1)*iProb12);
+              // }
+              }
             if (YNT(i,j)==1 && YT(i,j)==0) {
               for (int q=0; q < Q; ++q)
               {
@@ -248,12 +257,13 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
       {
       iGrad[3*Q + pNT + k + 1] = -0.5*XT(i,k)*iProb2*(1 - iProb2) * (nuij - 1 - cij + 2*iOR*iProb1)/(nuij*(iProb1 - iProb12));
       }
-      for (int k =0; k < pOR; ++k)
-      {
-      iGrad[3*Q + pNT + pT + k + 1] =  -XOR(i,k)*iOR*
-        (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
-         (2*(iOR - 1)*(iOR - 1)*(iProb1 - iProb12));
-      }}
+      // for (int k =0; k < pOR; ++k)
+      // {
+      // iGrad[3*Q + pNT + pT + k + 1] =  -XOR(i,k)*iOR*
+      //   (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
+      //    (2*(iOR - 1)*(iOR - 1)*(iProb1 - iProb12));
+      // }
+      }
       if (YNT(i,j)==0 && YT(i,j)==1) {
         for (int q=0; q < Q; ++q)
         {
@@ -272,12 +282,13 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
       {
       iGrad[3*Q + pNT + k + 1] = ((XT(i,k)*iProb2*(1 - iProb2)/(iProb2 - iProb12))) *(1 -  0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij);
       }
-      for (int k =0; k < pOR; ++k)
-      {
-      iGrad[3*Q + pNT + pT + k + 1] =  -XOR(i,k)*iOR*
-        (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
-          (2*(iOR - 1)*(iOR - 1)*(iProb2 - iProb12));
-      }}
+      // for (int k =0; k < pOR; ++k)
+      // {
+      // iGrad[3*Q + pNT + pT + k + 1] =  -XOR(i,k)*iOR*
+      //   (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
+      //     (2*(iOR - 1)*(iOR - 1)*(iProb2 - iProb12));
+      // }
+      }
       if (YNT(i,j)==0 && YT(i,j)==0) {
       for (int q=0; q < Q; ++q)
         {
@@ -296,12 +307,13 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
       {
       iGrad[3*Q + pNT + k + 1] = ((XT(i,k)*iProb2*(1 - iProb2)/(1 - iProb1 - iProb2 + iProb12))) *(0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij - 1);
       }
-      for (int k =0; k < pOR; ++k)
-      {
-      iGrad[3*Q + pNT + pT + k + 1] =  XOR(i,k)*iOR*
-        (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
-          (2*(iOR - 1)*(iOR - 1)*(1 - iProb1 - iProb2 + iProb12));
-      }}
+      // for (int k =0; k < pOR; ++k)
+      // {
+      // iGrad[3*Q + pNT + pT + k + 1] =  XOR(i,k)*iOR*
+      //   (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
+      //     (2*(iOR - 1)*(iOR - 1)*(1 - iProb1 - iProb2 + iProb12));
+      // }
+      }
       }}}
       // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
       // if (arma::is_finite(iContrib)) {} else {
