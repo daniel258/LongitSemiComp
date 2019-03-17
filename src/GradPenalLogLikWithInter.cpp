@@ -4,8 +4,8 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @export
 // [[Rcpp::export]]
-arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, 
-                          arma::mat XNT, arma::mat XT, arma::mat XOR, 
+arma::vec GradPenalLogLikWithInter(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, 
+                          arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat XinterMat, 
                           arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
      {
   int n = YT.n_rows;
@@ -13,6 +13,7 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
   int pNT = XNT.n_cols;
   int pT = XT.n_cols;
   int pOR = XOR.n_cols;
+  int pGammaInter = XinterMat.n_cols;
   int Q = TimeBase.n_cols;
   // Q is the the number of B-splines (number of rows in TimeBase should be J)
   // Decomposing "param" to individual paramters as in PenalLogLik
@@ -26,8 +27,9 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
   arma::vec betaNT = param.subvec(3*Q + 1,3*Q + pNT);
   arma::vec betaT = param.subvec(3*Q + pNT + 1,3*Q + pNT + pT);
   arma::vec betaOR = param.subvec(3*Q + pNT + pT + 1,3*Q + pNT + pT + pOR);
-  arma::vec Grad(1 + 3*Q + pNT + pT + pOR);
-  arma::vec iGrad(1 + 3*Q + pNT + pT + pOR);
+  arma::vec gammaInt = param.subvec(3*Q + pNT + pT + pOR + 1, 3*Q +  pNT + pT + pOR + pGammaInter);
+  arma::vec Grad(1 + 3*Q + pNT + pT + pOR + pGammaInter);
+  arma::vec iGrad(1 + 3*Q + pNT + pT + pOR + pGammaInter);
   Grad.fill(0);
   iGrad.fill(0);
   double iProbTafterNT = 0;
@@ -45,6 +47,7 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
   arma::vec ExpXBetaNT = exp(XNT * betaNT);
   arma::vec ExpXBetaT = exp(XT * betaT);
   arma::vec ExpXBetaOR = exp(XOR * betaOR);
+  arma::vec ExpXGammaInt = exp(XinterMat * gammaInt);
   arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
   arma::vec ExpAlphaT = exp(TimeBase * alphaT);
   arma::vec ExpAlphaOR = exp(TimeBase * alphaOR);
@@ -61,8 +64,8 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
           //   no contribution to the gradient
         } else {
           if (riskNT(i,j)==0) {
-            iProbTafterNT = (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma))/
-              (1 + (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)));
+            iProbTafterNT = (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)*ExpXGammaInt[i])/
+              (1 + (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)*ExpXGammaInt[i]));
             if(YT(i,j)==1) {
               iGrad[0] = 1-iProbTafterNT;
               for (int q=0; q < Q; ++q)
@@ -73,6 +76,10 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
               for (int k =0; k < pT; ++k)
               {
               iGrad[3*Q + pNT + k + 1] = XT(i,k)*(1-iProbTafterNT);
+              }
+              for (int k =0; k < pGammaInter; ++k)
+              {
+                iGrad[3*Q + pNT + pT + pOR + k + 1] = XinterMat(i,k)*(1-iProbTafterNT);
               }}
             else {
               iGrad[0] = -iProbTafterNT;
@@ -84,53 +91,61 @@ arma::vec GradPenalLogLik(arma::vec param, arma::mat YNT, arma::mat riskNT, arma
               for (int k =0; k < pT; ++k)
               {
                 iGrad[3*Q + pNT + k + 1] = -XT(i,k)*iProbTafterNT;
+              }
+              for (int k =0; k < pGammaInter; ++k)
+              {
+                iGrad[3*Q + pNT + pT + pOR + k + 1] = -XinterMat(i,k)*iProbTafterNT;
               }}
           } else {
             iProb1 = ExpAlphaNTnow*ExpXBetaNT[i]/(1 + (ExpAlphaNTnow*ExpXBetaNT[i]));
             iProb2 = ExpAlphaTnow*ExpXBetaT[i]/(1 + ExpAlphaTnow*ExpXBetaT[i]);
             iOR = ExpAlphaORnow*ExpXBetaOR[i];
+            // Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
+            // Rcpp::Rcout << "iProb2 "<< iProb2 << std::endl;
+            // Rcpp::Rcout << "iOR "<< iOR << std::endl;
             if ((iOR > 1 - epsOR) & (iOR < 1 + epsOR))
             {
-             iProb12 = iProb1*iProb2;
-             if (YNT(i,j)==1 && YT(i,j)==1) {
-                for (int q=0; q < Q; ++q)
-                {
-                  b = TimeBase(j,q);
-                  iGrad[1 + q] = b*(1 - iProb1);
-                  iGrad[Q + 1 + q] = b*(1 - iProb2);
-                  iGrad[2*Q + 1 + q] = 0;
-                }
-                for (int k =0; k < pNT; ++k)
-                {
-                  iGrad[3*Q + k + 1] = XNT(i,k)*(1 - iProb1);
-                }
-                for (int k =0; k < pT; ++k)
-                {
-                  iGrad[3*Q + pNT + k + 1] = XT(i,k)*(1 - iProb2);
-                }
-                for (int k =0; k < pOR; ++k)
-                {
-                  iGrad[3*Q + pNT + pT + k + 1] = 0;
-                }}
-              if (YNT(i,j)==1 && YT(i,j)==0) {
-                for (int q=0; q < Q; ++q)
-                {
-                  b = TimeBase(j,q);
-                  iGrad[1 + q] =  b*(1 - iProb1);
-                  iGrad[Q + 1 + q] = -b*iProb2;
-                  iGrad[2*Q + 1 + q] = 0;
-                }
-                for (int k =0; k < pNT; ++k)
-                {
-                  iGrad[3*Q + k + 1] = XNT(i,k)*(1 - iProb1);
-                }
-                for (int k =0; k < pT; ++k)
-                {
-                  iGrad[3*Q + pNT + k + 1] = -XT(i,k)*iProb2;
-                }
-                for (int k = 0; k < pOR; ++k)
-                {
-                  iGrad[3*Q + pNT + pT + k + 1] =  0;
+              iProb12 = iProb1*iProb2;
+              // Rcpp::Rcout << "Small OR:  "<< iOR << std::endl;
+               if (YNT(i,j)==1 && YT(i,j)==1) {
+                 for (int q=0; q < Q; ++q)
+                 {
+                   b = TimeBase(j,q);
+                   iGrad[1 + q] = b*(1 - iProb1);
+                   iGrad[Q + 1 + q] = b*(1 - iProb2);
+                   iGrad[2*Q + 1 + q] = 0;
+                 }
+                 for (int k =0; k < pNT; ++k)
+                 {
+                   iGrad[3*Q + k + 1] = XNT(i,k)*(1 - iProb1);
+                 }
+                 for (int k =0; k < pT; ++k)
+                 {
+                   iGrad[3*Q + pNT + k + 1] = XT(i,k)*(1 - iProb2);
+                 }
+                 for (int k =0; k < pOR; ++k)
+                 {
+                   iGrad[3*Q + pNT + pT + k + 1] = 0;
+                 }}
+               if (YNT(i,j)==1 && YT(i,j)==0) {
+                 for (int q=0; q < Q; ++q)
+                 {
+                   b = TimeBase(j,q);
+                   iGrad[1 + q] =  b*(1 - iProb1);
+                   iGrad[Q + 1 + q] = -b*iProb2;
+                   iGrad[2*Q + 1 + q] = 0;
+                 }
+                 for (int k =0; k < pNT; ++k)
+                 {
+                   iGrad[3*Q + k + 1] = XNT(i,k)*(1 - iProb1);
+                 }
+                 for (int k =0; k < pT; ++k)
+                 {
+                   iGrad[3*Q + pNT + k + 1] = -XT(i,k)*iProb2;
+                 }
+                 for (int k = 0; k < pOR; ++k)
+                 {
+                   iGrad[3*Q + pNT + pT + k + 1] =  0;
                  }}
                if (YNT(i,j)==0 && YT(i,j)==1) {
                  for (int q = 0; q < Q; ++q)

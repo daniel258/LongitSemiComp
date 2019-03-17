@@ -4,8 +4,8 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @export
 // [[Rcpp::export]]
-double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskNT, arma::mat riskT, 
-                   arma::mat XNT, arma::mat XT, arma::mat XOR,
+double PenalLogLikWithInter(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskNT, arma::mat riskT, 
+                   arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat XinterMat,
                    arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
 {
   int n = YT.n_rows;
@@ -13,6 +13,7 @@ double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskN
   int pNT = XNT.n_cols;
   int pT = XT.n_cols;
   int pOR = XOR.n_cols;
+  int pGammaInter = XinterMat.n_cols;
   int Q = TimeBase.n_cols; // Q is the the number of B-splines (number of rows in TimeBase should be J)
   // Decomposing "param" to individual paramters 
   double gamma = param[0];
@@ -25,6 +26,7 @@ double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskN
   arma::vec betaNT = param.subvec(3*Q + 1, 3*Q + pNT);
   arma::vec betaT = param.subvec(3*Q + pNT + 1,3*Q + pNT + pT);
   arma::vec betaOR = param.subvec(3*Q + pNT + pT + 1,3*Q +  pNT + pT + pOR);
+  arma::vec gammaInt = param.subvec(3*Q + pNT + pT + pOR + 1, 3*Q +  pNT + pT + pOR + pGammaInter);
   double loglik = 0;
   double iContrib = 0;
   double iProbTafterNT = 0;
@@ -38,6 +40,7 @@ double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskN
   arma::vec ExpXBetaNT = exp(XNT * betaNT);
   arma::vec ExpXBetaT = exp(XT * betaT);
   arma::vec ExpXBetaOR = exp(XOR * betaOR);
+  arma::vec ExpXGammaInt = exp(XinterMat * gammaInt);
   arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
   arma::vec ExpAlphaT = exp(TimeBase * alphaT);
   arma::vec ExpAlphaOR = exp(TimeBase * alphaOR);
@@ -53,8 +56,8 @@ double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskN
         //   nocontrib
       } else {
         if (riskNT(i,j)==0) {
-          iProbTafterNT = (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma))/
-            (1 + (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)));
+          iProbTafterNT = (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)*ExpXGammaInt[i])/
+            (1 + (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)*ExpXGammaInt[i]));
             if(YT(i,j)==1) {
             iContrib = log(iProbTafterNT);
           }

@@ -7,8 +7,8 @@ FirstOne <- function(x) {
 }
 
 #' @export
-GradPenalLogLik <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR) {
-    .Call('_LongitSemiComp_GradPenalLogLik', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR)
+GradPenalLogLik <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradPenalLogLik', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
 }
 
 #' @export
@@ -17,13 +17,23 @@ GradPenalLogLikNullModelOR <- function(param, YNT, riskNT, riskT, YT, XNT, XT, T
 }
 
 #' @export
-GradPenalLogLikPers <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR) {
-    .Call('_LongitSemiComp_GradPenalLogLikPers', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR)
+GradPenalLogLikPers <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradPenalLogLikPers', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
 }
 
 #' @export
 GradPenalLogLikPersNullModelOR <- function(param, YNT, riskNT, riskT, YT, XNT, XT, TimeBase, TimePen, lambda, epsOR) {
     .Call('_LongitSemiComp_GradPenalLogLikPersNullModelOR', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, TimeBase, TimePen, lambda, epsOR)
+}
+
+#' @export
+GradPenalLogLikPersWithInter <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradPenalLogLikPersWithInter', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR)
+}
+
+#' @export
+GradPenalLogLikWithInter <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradPenalLogLikWithInter', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR)
 }
 
 #' @export
@@ -37,8 +47,8 @@ ParamLogLik <- function(param, X, YNT, YT, riskNT, riskT) {
 }
 
 #' @export
-PenalLogLik <- function(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR) {
-    .Call('_LongitSemiComp_PenalLogLik', PACKAGE = 'LongitSemiComp', param, YT, YNT, riskNT, riskT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR)
+PenalLogLik <- function(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_PenalLogLik', PACKAGE = 'LongitSemiComp', param, YT, YNT, riskNT, riskT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
 }
 
 #' @export
@@ -69,5 +79,10 @@ PenalLogLikORconstNoX <- function(param, YNT, riskNT, riskT, YT, TimeBase, TimeP
 #' @export
 PenalLogLikORparam <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, PieceWiseTimes) {
     .Call('_LongitSemiComp_PenalLogLikORparam', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, PieceWiseTimes)
+}
+
+#' @export
+PenalLogLikWithInter <- function(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_PenalLogLikWithInter', PACKAGE = 'LongitSemiComp', param, YT, YNT, riskNT, riskT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR)
 }
 

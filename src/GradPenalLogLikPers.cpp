@@ -5,7 +5,7 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, 
-                              arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat XinterMat, 
+                              arma::mat XNT, arma::mat XT, arma::mat XOR, 
                               arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
          {
   int n = YT.n_rows;
@@ -13,11 +13,9 @@ arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, 
   int pNT = XNT.n_cols;
   int pT = XT.n_cols;
   int pOR = XOR.n_cols;
-  int pGammaInter = XinterMat.n_cols;
   int Q = TimeBase.n_cols;
   // Q is the the number of B-splines (number of rows in TimeBase should be J)
-  // Rcpp::Rcout << "p= "<< p << std::endl;
-// Decomposing "param" to individual paramters as in LogLik
+  // Decomposing "param" to individual paramters as in LogLik
   double gamma = param[0];
   arma::vec alphaNT = param.subvec(1, Q);
   arma::vec alphaT = param.subvec(Q + 1, 2*Q);
@@ -28,10 +26,9 @@ arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, 
   arma::vec betaNT = param.subvec(3*Q + 1, 3*Q + pNT);
   arma::vec betaT = param.subvec(3*Q + pNT + 1, 3*Q + pNT + pT);
   arma::vec betaOR = param.subvec(3*Q + pNT + pT +1, 3*Q + pNT + pT + pOR);
-  arma::vec gammaInt = param.subvec(3*Q + pNT + pT + pOR + 1, 3*Q +  pNT + pT + pOR + pGammaInter);
-  arma::vec Grad(1 + 3*Q + pNT + pT + pOR + pGammaInter);
-  arma::vec iGrad(1 + 3*Q + pNT + pT + pOR + pGammaInter);
-  arma::mat GradSquare(1 + 3*Q + pNT + pT + pOR + pGammaInter, 1 + 3*Q + pNT + pT + pOR + pGammaInter);
+  arma::vec Grad(1 + 3*Q + pNT + pT + pOR);
+  arma::vec iGrad(1 + 3*Q + pNT + pT + pOR);
+  arma::mat GradSquare(1 + 3*Q + pNT + pT + pOR, 1 + 3*Q + pNT + pT + pOR);
   Grad.fill(0);
   iGrad.fill(0);
   GradSquare.fill(0);
@@ -49,7 +46,6 @@ arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, 
   arma::vec ExpXBetaNT = exp(XNT * betaNT);
   arma::vec ExpXBetaT = exp(XT * betaT);
   arma::vec ExpXBetaOR = exp(XOR * betaOR);
-  arma::vec ExpXGammaInt = exp(XinterMat * gammaInt);
   arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
   arma::vec ExpAlphaT = exp(TimeBase * alphaT);
   arma::vec ExpAlphaOR = exp(TimeBase * alphaOR);
@@ -66,8 +62,8 @@ arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, 
           //   no contribution to the gradient
         } else {
           if (riskNT(i,j)==0) {
-            iProbTafterNT = (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)*ExpXGammaInt[i])/
-              (1 + (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)*ExpXGammaInt[i]));
+            iProbTafterNT = (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma))/
+              (1 + (ExpAlphaTnow*ExpXBetaT[i]*exp(gamma)));
             if(YT(i,j)==1) {
               iGrad[0] = 1-iProbTafterNT;
               for (int q=0; q < Q; ++q)
@@ -78,10 +74,6 @@ arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, 
               for (int k =0; k < pT; ++k)
               {
               iGrad[3*Q + pNT + k + 1] = XT(i,k)*(1-iProbTafterNT);
-              }
-              for (int k =0; k < pGammaInter; ++k)
-              {
-                iGrad[3*Q + pNT + pT + pOR + k + 1] = XinterMat(i,k)*(1-iProbTafterNT);
               }}
             else {
               iGrad[0] = -iProbTafterNT;
@@ -93,10 +85,6 @@ arma::mat GradPenalLogLikPers(arma::vec param, arma::mat YNT, arma::mat riskNT, 
               for (int k =0; k < pT; ++k)
               {
                 iGrad[3*Q + pNT + k + 1] = -XT(i,k)*iProbTafterNT;
-              }
-              for (int k =0; k < pGammaInter; ++k)
-              {
-                iGrad[3*Q + pNT + pT + pOR + k + 1] = -XinterMat(i,k)*iProbTafterNT;
               }}
             } else {
             iProb1 = ExpAlphaNTnow*ExpXBetaNT[i]/(1 + (ExpAlphaNTnow*ExpXBetaNT[i]));
