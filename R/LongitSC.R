@@ -140,7 +140,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                          YNT = longit.data$YNT, YT = longit.data$YT, 
                          riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                          TimeBase = Bsplines,
-                         TimePen = S.penal, lambda = rep(0,3)) # used for aic
+                         TimePen = S.penal, lambda = rep(0,3)) # used for aic (this is minus the log-lik!!)
   fit$hess.penal <- res.opt$hessian
   fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
   my.grad.sqrd <- GradPenalLogLikPersWithInter(param = res.opt$par, epsOR = epsOr,
@@ -162,7 +162,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   } else {
     fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
   }
-  fit$aic <- 2*fit$lik - 2*fit$df # lik is the likelihood without the peanlty
+  fit$aic <- -2*fit$lik - 2*fit$df # lik is minus the log-likelihood without the peanlty
   fit$coef.longterm <-  fit$est[1]
   fit$time.int.NT <- expit(Bsplines%*%fit$est[2:(1 + Q)])
   fit$time.int.T <- expit(Bsplines%*%fit$est[(1 + Q + 1):(1 + 2*Q)])
