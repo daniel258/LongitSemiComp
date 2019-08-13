@@ -136,7 +136,7 @@ SimLongitDataAug19 <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alph
   }
   # Add censoring
   C <- sample(x = 2:J, replace = T, size = n.sample)
-  somecens <- rbinom(n.sample, 1, 0.3)
+  somecens <- rbinom(n.sample, 1, 0.5)
   for (i in 1:n.sample)
   {
   if (somecens[i]==1) {
