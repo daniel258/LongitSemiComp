@@ -223,7 +223,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
       fit$df <- 0 # Indicates a problem
     } else {
       fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
-      print(fit$df)
+      #print(fit$df)
     }
     fit$aic <- -2*fit$lik - 2*fit$df # lik is minus the log-likelihood without the peanlty
     fit$coef.longterm <-  fit$est[1]
