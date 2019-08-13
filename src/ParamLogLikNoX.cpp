@@ -4,22 +4,15 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @export
 // [[Rcpp::export]]
-double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, 
-                      arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda,
-                      double epsOR)
+double ParamLogLikNoX(arma::vec param, arma::mat YNT, arma::mat YT, 
+                   arma::mat riskNT, arma::mat riskT, double epsOR)
      {
   int n = YT.n_rows;
   int J = YT.n_cols;
-  int Q = TimeBase.n_cols; // Q is the the number of B-splines (number of rows in TimeBase should be J)
-  // Rcpp::Rcout << "p= "<< p << std::endl;
-// Decomposing "param" to individual paramters as in LogLik
   double gamma = param[0];
-  arma::vec alphaNT = param.subvec(1,Q);
-  arma::vec alphaT = param.subvec(Q+1,2*Q);
-  arma::vec alphaOR = param.subvec(2*Q+1,3*Q);
-  arma::mat penaltermNT = lambda[0] * alphaNT.t() * TimePen * alphaNT;
-  arma::mat penaltermT = lambda[1] * alphaT.t() * TimePen * alphaT;
-  arma::mat penaltermOR = lambda[2] * alphaOR.t() * TimePen * alphaOR;
+  arma::vec alphaNT = param.subvec(1,J);
+  arma::vec alphaT = param.subvec(J+1,2*J);
+  arma::vec alphaOR = param.subvec(2*J+1,3*J);
   double loglik = 0;
   double iContrib = 0;
   double iProbTafterNT = 0;
@@ -30,9 +23,9 @@ double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::ma
   double ExpAlphaNTnow = 0;
   double ExpAlphaTnow = 0;
   double ExpAlphaORnow = 0;
-  arma::vec ExpAlphaNT = exp(TimeBase * alphaNT);
-  arma::vec ExpAlphaT = exp(TimeBase * alphaT);
-  arma::vec ExpAlphaOR = exp(TimeBase * alphaOR);
+  arma::vec ExpAlphaNT = exp(alphaNT);
+  arma::vec ExpAlphaT = exp(alphaT);
+  arma::vec ExpAlphaOR = exp(alphaOR);
   for (int j = 0; j < J; ++j)
   {
     ExpAlphaNTnow = ExpAlphaNT[j];
@@ -41,8 +34,7 @@ double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::ma
     for (int i = 0; i < n; ++i)
     {
         if (riskT(i,j)==0) {
-          iContrib=0;
-          //   nocontrib
+          iContrib=0;          //   nocontrib
         } else {
           if (riskNT(i,j)==0) {
             iProbTafterNT = (ExpAlphaTnow*exp(gamma))/(1 + (ExpAlphaTnow*exp(gamma)));
@@ -56,13 +48,13 @@ double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::ma
             iProb1 = ExpAlphaNTnow/(1 + ExpAlphaNTnow);
             iProb2 = ExpAlphaTnow/(1 + ExpAlphaTnow);
             iOR = ExpAlphaORnow;
-            if ((iOR>0.99) & (iOR<1.01))            {
+            if ((iOR > 1 - epsOR) & (iOR < 1 + epsOR))
+            {
               iProb12 = iProb1*iProb2;
             } else {
               iProb12 = (1 + (iProb1 + iProb2)*(iOR - 1) - sqrt(pow(1 + (iProb1 + iProb2)*(iOR - 1), 2.0) -
                 4*iOR*(iOR - 1)*iProb1*iProb2)) / (2 * (iOR - 1));
             }
-            // Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
             if (YNT(i,j)==1 && YT(i,j)==1) {
               iContrib = log(iProb12);
             }
@@ -76,10 +68,7 @@ double PenalLogLikNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::ma
               iContrib = log(1 - iProb1 - iProb2 + iProb12);
             }
           }}
-      // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
       loglik += iContrib;
     }}
-double  penalloglik = loglik - as_scalar(penaltermNT) - as_scalar(penaltermT) - as_scalar(penaltermOR);
- // Rcpp::Rcout << "penalloglik "<< penalloglik << std::endl;
-  return(-penalloglik);
+  return(-loglik);
      }

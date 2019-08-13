@@ -2,11 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
-FirstOne <- function(x) {
-    .Call('_LongitSemiComp_FirstOne', PACKAGE = 'LongitSemiComp', x)
-}
-
-#' @export
 GradPenalLogLik <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
     .Call('_LongitSemiComp_GradPenalLogLik', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
 }
@@ -42,8 +37,13 @@ OddsRatioTime <- function(YNT, YT, riskNT, riskT) {
 }
 
 #' @export
-ParamLogLik <- function(param, X, YNT, YT, riskNT, riskT) {
-    .Call('_LongitSemiComp_ParamLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, YT, riskNT, riskT)
+ParamLogLik <- function(param, X, YNT, YT, riskNT, riskT, epsOR) {
+    .Call('_LongitSemiComp_ParamLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, YT, riskNT, riskT, epsOR)
+}
+
+#' @export
+ParamLogLikNoX <- function(param, YNT, YT, riskNT, riskT, epsOR) {
+    .Call('_LongitSemiComp_ParamLogLikNoX', PACKAGE = 'LongitSemiComp', param, YNT, YT, riskNT, riskT, epsOR)
 }
 
 #' @export
@@ -52,8 +52,8 @@ PenalLogLik <- function(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, TimeBase, T
 }
 
 #' @export
-PenalLogLikNoX <- function(param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
-    .Call('_LongitSemiComp_PenalLogLikNoX', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
+PenalLogLikNoX <- function(param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_PenalLogLikNoX', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda, epsOR)
 }
 
 #' @export
