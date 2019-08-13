@@ -100,6 +100,9 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     } else {
       fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
     }
+    if (all(lambda==0)) { # without regluarization, df is just the number of parameters
+      fit$df <- length(fit$est)
+    }
     fit$aic <- -2*fit$lik - 2*fit$df # lik is minus the log-likelihood without the peanlty
     fit$coef.longterm <-  fit$est[1]
     fit$time.int.NT <- expit(Bsplines%*%fit$est[2:(1 + Q)])
@@ -220,6 +223,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
       fit$df <- 0 # Indicates a problem
     } else {
       fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
+      print(fit$df)
     }
     fit$aic <- -2*fit$lik - 2*fit$df # lik is minus the log-likelihood without the peanlty
     fit$coef.longterm <-  fit$est[1]
