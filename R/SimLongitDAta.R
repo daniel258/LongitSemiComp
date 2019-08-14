@@ -144,7 +144,7 @@ SimLongitDataAug19 <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alph
   risk.NT[i, C[i]:J] <- risk.T[i, C[i]:J] <- 0
   }
   }
-  return(list(X.time.dep = X.time.dep, X.time.fixed, YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
+  return(list(X.time.dep = X.time.dep, X.time.fixed = X.time.fixed, YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
 }
 
 #' @export
