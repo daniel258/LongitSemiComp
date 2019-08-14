@@ -82,7 +82,7 @@ SimLongitDataAug19 <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alph
   if (length(alpha.or) != length(times)) {stop("alpha.or should be in the same length as times")}
   J <- length(times)
   p <- length(beta.nt)
-  X.time.fixed <- rnorm(n.sample)
+  X.time.fixed <- as.matrix(rnorm(n.sample))
   X.time.dep <- matrix(nr = n.sample, nc = J, 0) 
   X.time.dep[, 1] <- rbinom(n.sample, 1, 0.6)  # At baseline 0.6 are married
   risk.NT <- risk.T <- YNT <- YT <- matrix(nr = n.sample, nc = J, 0)
