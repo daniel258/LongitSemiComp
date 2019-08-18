@@ -72,7 +72,7 @@ SimLongitDataParam <- function(n.sample, J,  gamma,  alpha.nt, alpha.t, alpha.or
 #' @param beta.nt Covariate effects on the non-terminal event
 #' @param beta.t Covariate effects on the terminal event
 #' @param beta.or Covariate effects on the odds ratio
-SimLongitDataAug19 <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
+SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
 {
   # This function is different than those I previoulsy used by the fact it has
   # A time-dependent covariate
@@ -103,7 +103,7 @@ SimLongitDataAug19 <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alph
     Xnow <- X.time.dep[ ,j - 1]
     Xnow[Xnow==1] <- rbinom(sum(Xnow), 1, 0.9) # out of those who were married, only 90% remain married at each interval
     X.time.dep[ ,j] <- Xnow
-    X <- cbind(X.time.fixed, Xnow)
+    Xtemp <- cbind(X.time.fixed, Xnow)
     risk.NT[,j] <- (YNT[,j-1]==0 & YT[,j-1]==0)
     risk.T[,j] <- 1*(YT[,j-1]==0)
     at.risk.T.only <- risk.NT[,j]==0 & risk.T[,j]==1
@@ -111,19 +111,15 @@ SimLongitDataAug19 <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alph
     # at risk for terminal event only
     if (sum(at.risk.T.only)>0)
     {
-      probs.T.only <- expit(alpha.t[j] + X[at.risk.T.only, ]%*%beta.t + beta.y)
-      YT[at.risk.T.only, j] <- rbinom(sum(at.risk.T.only), 1, probs.T.only)
-      # if (j < J)
-      # {
-        # YT[YT[,j]==1, j + 1] <- 1
-      # }
-      }
+      probs.T.only <- expit(alpha.t[j] + Xtemp[at.risk.T.only, ]%*%beta.t + beta.y)
+      YT[at.risk.T.only, j] <- rbinom(sum(at.risk.T.only), 1, probs.T.only) 
+    }
     #at risk for both events
     if  (sum(at.risk.both)>0)
     {
-      p.nt.both <- expit(alpha.nt[j] + X[at.risk.both, ]%*%beta.nt)
-      p.t.both <- expit(alpha.t[j] + X[at.risk.both, ]%*%beta.t)
-      OR.both <- exp(alpha.or[j]+ X[at.risk.both, ]%*%beta.or)
+      p.nt.both <- expit(alpha.nt[j] + Xtemp[at.risk.both, ]%*%beta.nt)
+      p.t.both <- expit(alpha.t[j] + Xtemp[at.risk.both, ]%*%beta.t)
+      OR.both <- exp(alpha.or[j]+ Xtemp[at.risk.both, ]%*%beta.or)
       probs.both <- MargORtoJoint(p1marg = p.nt.both, p2marg = p.t.both, OR = OR.both)
       crude.data.both <- apply(X = probs.both, MARGIN = 1, FUN = sample, x = 1:4, size = 1, replace = T)
       YNT[at.risk.both, j] <- crude.data.both %in% c(2, 4)
@@ -142,9 +138,24 @@ SimLongitDataAug19 <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alph
   if (somecens[i]==1) {
   YNT[i, C[i]:J] <- YT[i, C[i]:J] <- NA
   risk.NT[i, C[i]:J] <- risk.T[i, C[i]:J] <- 0
+  }}
+  obs.per.person <- apply(risk.T,1, function(x) sum(x==1, na.rm = T))
+  ID <- rep(1:n.sample, times = obs.per.person)
+  Xcln <- matrix(nc = 2, nr = sum(obs.per.person))
+  TM <- YNTcln <- YTcln <- vector(length = sum(obs.per.person))
+  temp.ind <- 1
+  for (i in 1:n.sample)
+  {
+    nobs.i <- obs.per.person[i]
+    indicesY <- temp.ind:(temp.ind + nobs.i - 1)
+    YNTcln[indicesY] <- YNT[i, 1:nobs.i]
+    YTcln[indicesY] <- YT[i, 1:nobs.i]
+    TM[indicesY] <- 1:nobs.i
+    Xcln[indicesY, 1] <- rep(X.time.fixed[i], nobs.i)
+    Xcln[indicesY, 2] <- X.time.dep[i, 1:nobs.i]
+    temp.ind <- temp.ind + nobs.i
   }
-  }
-  return(list(X.time.dep = X.time.dep, X.time.fixed = X.time.fixed, YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
+  return(list(X = Xcln, YNT = YNTcln, YT = YTcln, ID = ID, TM = TM))
 }
 
 #' @export
