@@ -13,7 +13,7 @@ MargORtoJoint <- function(p1marg, p2marg, OR)
 }
 # J - number of time points
 #' @export
-SimLongitDataParam <- function(n.sample, J,  gamma,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
+SimLongitDataParam <- function(n.sample, J,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
 {
  p <- length(beta.nt)
  X <- matrix(nr = n.sample, nc = p, rnorm(n.sample*p))
@@ -38,7 +38,7 @@ SimLongitDataParam <- function(n.sample, J,  gamma,  alpha.nt, alpha.t, alpha.or
   # at risk for terminal event only
   if (sum(at.risk.T.only)>0)
   {
-  probs.T.only <- expit(alpha.t[j] + X[at.risk.T.only, ]%*%beta.t + gamma)
+  probs.T.only <- expit(alpha.t[j] + X[at.risk.T.only, ]%*%beta.t + beta.y)
   YT[at.risk.T.only, j] <- rbinom(sum(at.risk.T.only), 1, probs.T.only)
   if (j < J)
     {
@@ -189,7 +189,7 @@ SimLongitDataSmooth <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alp
     # at risk for terminal event only
     if (sum(at.risk.T.only)>0)
     {
-      probs.T.only <- expit(alpha.t[j] + X[at.risk.T.only, ]%*%beta.t + gamma)
+      probs.T.only <- expit(alpha.t[j] + X[at.risk.T.only, ]%*%beta.t + beta.y)
       YT[at.risk.T.only, j] <- rbinom(sum(at.risk.T.only), 1, probs.T.only)
       # if (j < J)
       # {
@@ -219,7 +219,7 @@ SimLongitDataSmooth <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alp
   return(list(X =X, YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
 }
 #' @export
-SimLongitDataSmoothNoX <- function(n.sample, times = 1:100,  gamma,  alpha.nt, alpha.t, alpha.or)
+SimLongitDataSmoothNoX <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or)
 {
   J <- length(times)
   YNT <- YT <- matrix(nr = n.sample, nc = J, 0)
@@ -239,7 +239,7 @@ SimLongitDataSmoothNoX <- function(n.sample, times = 1:100,  gamma,  alpha.nt, a
     # at risk for terminal event only
     if (sum(at.risk.T.only)>0)
     {
-      probs.T.only <- expit(alpha.t[j] + gamma)
+      probs.T.only <- expit(alpha.t[j] + beta.y)
       YT[at.risk.T.only, j] <- rbinom(sum(at.risk.T.only), 1, probs.T.only)
       if (j < J)
       {
