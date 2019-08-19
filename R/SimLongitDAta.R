@@ -72,7 +72,8 @@ SimLongitDataParam <- function(n.sample, J,  beta.y,  alpha.nt, alpha.t, alpha.o
 #' @param beta.nt Covariate effects on the non-terminal event
 #' @param beta.t Covariate effects on the terminal event
 #' @param beta.or Covariate effects on the odds ratio
-SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
+SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or,
+                                 cens.poten.rate = 0.5) # cens.poten.rate is not really the censrate
 {
   # This function is different than those I previoulsy used by the fact it has
   # A time-dependent covariate
@@ -104,10 +105,10 @@ SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, al
     Xnow[Xnow==1] <- rbinom(sum(Xnow), 1, 0.9) # out of those who were married, only 90% remain married at each interval
     X.time.dep[ ,j] <- Xnow
     Xtemp <- cbind(X.time.fixed, Xnow)
-    risk.NT[,j] <- (YNT[,j-1]==0 & YT[,j-1]==0)
-    risk.T[,j] <- 1*(YT[,j-1]==0)
-    at.risk.T.only <- risk.NT[,j]==0 & risk.T[,j]==1
-    at.risk.both <- risk.NT[,j]==1 & risk.T[,j]==1
+    risk.NT[,j] <- (YNT[, j - 1]==0 & YT[, j - 1]==0)
+    risk.T[,j] <- 1*(YT[, j - 1]==0)
+    at.risk.T.only <- risk.NT[, j]==0 & risk.T[, j]==1
+    at.risk.both <- risk.NT[, j]==1 & risk.T[, j]==1
     # at risk for terminal event only
     if (sum(at.risk.T.only)>0)
     {
@@ -132,12 +133,14 @@ SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, al
   }
   # Add censoring
   C <- sample(x = 2:J, replace = T, size = n.sample)
-  somecens <- rbinom(n.sample, 1, 0.5)
+  somecens <- rbinom(n.sample, 1, cens.poten.rate)
+  cens <- rep(0, n.sample)
   for (i in 1:n.sample)
   {
   if (somecens[i]==1) {
   YNT[i, C[i]:J] <- YT[i, C[i]:J] <- NA
   risk.NT[i, C[i]:J] <- risk.T[i, C[i]:J] <- 0
+  if (risk.T[i, C[i] - 1]==0) {cens[i] = 1} # cens=1 if observation i was actually censored
   }}
   obs.per.person <- apply(risk.T,1, function(x) sum(x==1, na.rm = T))
   ID <- rep(1:n.sample, times = obs.per.person)
@@ -155,7 +158,7 @@ SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, al
     Xcln[indicesY, 2] <- X.time.dep[i, 1:nobs.i]
     temp.ind <- temp.ind + nobs.i
   }
-  return(list(X = Xcln, YNT = YNTcln, YT = YTcln, ID = ID, TM = TM))
+  return(list(X = Xcln, YNT = YNTcln, YT = YTcln, ID = ID, TM = TM, cens = cens))
 }
 
 #' @export
