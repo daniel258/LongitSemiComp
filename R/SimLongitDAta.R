@@ -167,7 +167,6 @@ SimLongitDataSmooth <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alp
   if (length(alpha.nt) != length(times)) {stop("alpha.nt should be in the same length as times")}
   if (length(alpha.t) != length(times)) {stop("alpha.t should be in the same length as times")}
   if (length(alpha.or) != length(times)) {stop("alpha.or should be in the same length as times")}
-  if (length(norm.bin==1))
     J <- length(times)
   p <- length(beta.nt)
   X <- matrix(nr = n.sample, nc = p, rnorm(n.sample*p))
