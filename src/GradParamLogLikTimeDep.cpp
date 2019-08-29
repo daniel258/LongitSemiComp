@@ -55,6 +55,7 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
   arma::vec ExpXBetaOR = exp(XOR * betaOR);
   for (int i = 0; i < n; ++i)
   {
+    // Rcpp::Rcout << "i= "<< i << std::endl;
     int iID = IDunq[i]; // get observation ID
     // Get all data on that observation
     arma::uvec pos = find(ID==iID); // rows associated with the observation
@@ -74,6 +75,7 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
      arma::vec iRiskNT = arma::ones<arma::vec>(iJ);
   for (int j = 0; j < iJ; ++j)
   {
+    // Rcpp::Rcout << "j= "<< j << std::endl;
     int jTM = iTM[j]-1;
     ExpAlphaNTnow = iExpAlphaNT[jTM];
     ExpAlphaTnow = iExpAlphaT[jTM];
@@ -89,12 +91,12 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
           iProbTafterNT = (ExpAlphaTnow*ExpXBetaTnow*exp(betay)) / (1 + (ExpAlphaTnow*ExpXBetaTnow*exp(betay)));
           if(iYT[j]==1) {
             iGrad[0] = 1-iProbTafterNT;
-            iGrad(arma::span(1 + J, 2*J))= (1-iProbTafterNT);
+            iGrad[J + jTM + 1] = (1-iProbTafterNT);
             iGrad(arma::span(3*J + pNT + 1, 3*J + pNT + pT)) = iXTnow*(1-iProbTafterNT);
             } 
           else {
             iGrad[0] = -iProbTafterNT;
-            iGrad(arma::span(1 + J, 2*J)) = -iProbTafterNT;
+            iGrad[J + jTM + 1] = -iProbTafterNT;
             iGrad(arma::span(3*J + pNT + 1, 3*J + pNT + pT)) = -iXTnow*iProbTafterNT;    
               }} else {
           iGrad[0] = 0;
@@ -105,38 +107,38 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
           {
             iProb12 = iProb1*iProb2;
           if (iYNT[j]==1 && iYT[j]==1) {
-            iGrad(arma::span(1, J)) = (1 - iProb1);
-            iGrad(arma::span(J + 1,2*J)) = (1 - iProb2);
-            iGrad(arma::span(2*J + 1,3*J)).fill(0);
+            iGrad[1 + jTM] = 1 - iProb1;
+            iGrad[J + jTM + 1] = 1 - iProb2;
+            //iGrad(arma::span(2*J + 1,3*J)).fill(0);
             iGrad(arma::span(3*J + 1, 3*J + pNT)) = iXNTnow*(1 - iProb1);
             iGrad(arma::span(3*J + pNT + 1, 3*J + pNT + pT)) = iXTnow*(1 - iProb2);
-            iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
+            //iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
             }
           if (iYNT[j]==1 && iYT[j]==0) {
-            iGrad(arma::span(1, J)) =  (1 - iProb1);
-            iGrad(arma::span(J + 1, 2*J)) = -iProb2;
-            iGrad(arma::span(2*J + 1, 3*J)).fill(0);
+            iGrad[1 + jTM] = 1 - iProb1;
+            iGrad[J + jTM + 1] = -iProb2;
+            //iGrad(arma::span(2*J + 1, 3*J)).fill(0);
             iGrad(arma::span(3*J + 1, 3*J + pNT)) = iXNTnow*(1 - iProb1);
             iGrad(arma::span(3*J + pNT + 1, 3*J + pNT + pT)) = -iXTnow*iProb2;
-            iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
+            //iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
             if (j < iJ) { 
              iRiskNT[j+1] = 0;}
           }
           if (iYNT[j]==0 && iYT[j]==1) {
-            iGrad(arma::span(1, J)) =  -iProb1;
-            iGrad(arma::span(J + 1, 2*J)) = (1 - iProb2);
+            iGrad[1 + jTM] = -iProb1;
+            iGrad[J + jTM + 1] = 1 - iProb2;
             iGrad(arma::span(2*J + 1, 3*J)).fill(0);
             iGrad(arma::span(3*J + 1, 3*J + pNT)) = -iXNTnow*iProb1;
             iGrad(arma::span(3*J + pNT + 1, 3*J + pNT + pT)) = iXTnow*(1 - iProb2);
-            iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
+            //iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
           }
           if (iYNT[j]==0 && iYT[j]==0) {
-            iGrad(arma::span(1, J)) =  -iProb1;
-            iGrad(arma::span(J + 1, 2*J)) = -iProb2;
-            iGrad(arma::span(2*J + 1, 3*J)).fill(0);
+            iGrad[1 + jTM] = -iProb1;
+            iGrad[J + jTM + 1] = -iProb2;
+            //iGrad(arma::span(2*J + 1, 3*J)).fill(0);
             iGrad(arma::span(3*J + 1, 3*J + pNT)) = -iXNTnow*iProb1;
             iGrad(arma::span(3*J + pNT + 1, 3*J + pNT + pT)) = -iXTnow*iProb2;
-            iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
+            //iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)).fill(0);
             }
         } 
       else {
@@ -144,9 +146,9 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
         nuij = sqrt(pow(1 + cij, 2.0) - 4*iOR*(iOR - 1)*iProb1*iProb2);
         iProb12 = (1 + cij - nuij) / (2 * (iOR - 1));
         if (iYNT[j]==1 && iYT[j]==1) {
-          iGrad(arma::span(1, J)) = 0.5*iProb1*(1 - iProb1) * (nuij - 1 - cij + 2*iOR*iProb2)/(nuij*iProb12);
-          iGrad(arma::span(J + 1, 2*J)) = 0.5*iProb2*(1 - iProb2) * (nuij - 1 - cij + 2*iOR*iProb1)/(nuij*iProb12);
-          iGrad(arma::span(2*J + 1, 3*J)) = iOR*
+          iGrad[1 + jTM] = 0.5*iProb1*(1 - iProb1) * (nuij - 1 - cij + 2*iOR*iProb2)/(nuij*iProb12);
+          iGrad[J + jTM + 1] = 0.5*iProb2*(1 - iProb2) * (nuij - 1 - cij + 2*iOR*iProb1)/(nuij*iProb12);
+          iGrad[2*J + jTM + 1] = iOR*
            (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
                 (2*(iOR - 1)*(iOR - 1)*iProb12);
           iGrad(arma::span(3*J + 1, 3*J + pNT)) = 0.5*iXNTnow*iProb1*(1 - iProb1) * (nuij - 1 - cij + 2*iOR*iProb2)/(nuij*iProb12);
@@ -156,9 +158,9 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
                       (2*(iOR - 1)*(iOR - 1)*iProb12);
                 }
         if (iYNT[j]==1 && iYT[j]==0) {
-          iGrad(arma::span(1, J)) =  ((iProb1*(1 - iProb1)/(iProb1 - iProb12))) *(1 -  0.5*(nuij - 1 - cij + 2*iOR*iProb2)/nuij);
-          iGrad(arma::span(J + 1, 2*J)) = -0.5*iProb2*(1 - iProb2) * (nuij - 1 - cij + 2*iOR*iProb1)/(nuij*(iProb1 - iProb12));
-          iGrad(arma::span(2*J + 1, 3*J)) = -iOR*
+          iGrad[1 + jTM] = (iProb1*(1 - iProb1)/(iProb1 - iProb12)) *(1 -  0.5*(nuij - 1 - cij + 2*iOR*iProb2)/nuij);
+          iGrad[J + jTM + 1] = -0.5*iProb2*(1 - iProb2) * (nuij - 1 - cij + 2*iOR*iProb1)/(nuij*(iProb1 - iProb12));
+          iGrad[2*J + jTM + 1] = -iOR*
             (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
                 (2*(iOR - 1)*(iOR - 1)*(iProb1 - iProb12));
           iGrad(arma::span(3*J + 1, 3*J + pNT)) = ((iXNTnow*iProb1*(1 - iProb1)/(iProb1 - iProb12))) *(1 -  0.5*(nuij - 1 - cij + 2*iOR*iProb2)/nuij);
@@ -170,9 +172,9 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
             iRiskNT[j+1] = 0;}
               }
         if (iYNT[j]==0 && iYT[j]==1) {
-          iGrad(arma::span(1, J)) =  -0.5*iProb1*(1 - iProb1) * (nuij - 1 - cij + 2*iOR*iProb2)/(nuij*(iProb2 - iProb12));
-          iGrad(arma::span(J + 1, 2*J)) = ((iProb2*(1 - iProb2)/(iProb2 - iProb12))) *(1 -  0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij);
-          iGrad(arma::span(2*J + 1, 3*J)) = -iOR*
+          iGrad[1 + jTM] = -0.5*iProb1*(1 - iProb1) * (nuij - 1 - cij + 2*iOR*iProb2)/(nuij*(iProb2 - iProb12));
+          iGrad[J + jTM + 1] = (iProb2*(1 - iProb2)/(iProb2 - iProb12)) *(1 -  0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij);
+          iGrad[2*J + jTM + 1] = -iOR*
             (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
                       (2*(iOR - 1)*(iOR - 1)*(iProb2 - iProb12));
           iGrad(arma::span(3*J + 1, 3*J + pNT)) = -0.5*iXNTnow*iProb1*(1 - iProb1) * (nuij - 1 - cij + 2*iOR*iProb2)/(nuij*(iProb2 - iProb12));
@@ -182,9 +184,9 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
                     (2*(iOR - 1)*(iOR - 1)*(iProb2 - iProb12));
                 }
         if (iYNT[j]==0 && iYT[j]==0) {
-          iGrad(arma::span(1, J)) =  ((iProb1*(1 - iProb1)/(1 - iProb1 - iProb2 + iProb12))) *(0.5*(nuij - 1 - cij + 2*iOR*iProb2)/nuij - 1);
-          iGrad(arma::span(J + 1, 2*J)) = ((iProb2*(1 - iProb2)/(1 - iProb1 - iProb2 + iProb12))) *(0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij - 1);
-          iGrad(arma::span(2*J + 1, 3*J)) =  iOR*
+          iGrad[1 + jTM] = (iProb1*(1 - iProb1)/(1 - iProb1 - iProb2 + iProb12)) *(0.5*(nuij - 1 - cij + 2*iOR*iProb2)/nuij - 1);
+          iGrad[J + jTM + 1] = (iProb2*(1 - iProb2)/(1 - iProb1 - iProb2 + iProb12)) *(0.5*(nuij - 1 - cij + 2*iOR*iProb1)/nuij - 1);
+          iGrad[2*J + jTM + 1] = iOR*
             (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
                       (2*(iOR - 1)*(iOR - 1)*(1 - iProb1 - iProb2 + iProb12));
           iGrad(arma::span(3*J + 1, 3*J + pNT)) = ((iXNTnow*iProb1*(1 - iProb1)/(1 - iProb1 - iProb2 + iProb12))) *(0.5*(nuij - 1 - cij + 2*iOR*iProb2)/nuij - 1);
