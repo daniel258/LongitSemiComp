@@ -2,6 +2,16 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
+GradParamLogLikPersTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradParamLogLikPersTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
+}
+
+#' @export
+GradParamLogLikTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR) {
+    .Call('_LongitSemiComp_GradParamLogLikTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR)
+}
+
+#' @export
 GradPenalLogLik <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
     .Call('_LongitSemiComp_GradPenalLogLik', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
 }
@@ -22,8 +32,18 @@ GradPenalLogLikPersNullModelOR <- function(param, YNT, riskNT, riskT, YT, XNT, X
 }
 
 #' @export
+GradPenalLogLikPersTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradPenalLogLikPersTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
+}
+
+#' @export
 GradPenalLogLikPersWithInter <- function(param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR) {
     .Call('_LongitSemiComp_GradPenalLogLikPersWithInter', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, XNT, XT, XOR, XinterMat, TimeBase, TimePen, lambda, epsOR)
+}
+
+#' @export
+GradPenalLogLikTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
+    .Call('_LongitSemiComp_GradPenalLogLikTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
 }
 
 #' @export
@@ -49,6 +69,11 @@ ParamLogLik <- function(param, X, YNT, YT, riskNT, riskT, epsOR) {
 #' @export
 ParamLogLikNoX <- function(param, YNT, YT, riskNT, riskT, epsOR) {
     .Call('_LongitSemiComp_ParamLogLikNoX', PACKAGE = 'LongitSemiComp', param, YNT, YT, riskNT, riskT, epsOR)
+}
+
+#' @export
+ParamLogLikTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR) {
+    .Call('_LongitSemiComp_ParamLogLikTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR)
 }
 
 #' @export
