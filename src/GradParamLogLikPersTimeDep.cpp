@@ -4,10 +4,10 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @export
 // [[Rcpp::export]]
-arma::rowvec GradParamLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
-                      arma::vec YT, arma::vec YNT, 
-                   arma::mat XNT, arma::mat XT, arma::mat XOR,
-                   arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
+arma::mat GradParamLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
+                                        arma::vec YT, arma::vec YNT, 
+                                        arma::mat XNT, arma::mat XT, arma::mat XOR, 
+                                        double epsOR)
 {
   arma::vec IDunq = arma::unique(ID); // IDs once
   int n = IDunq.size(); // sample size

@@ -220,59 +220,10 @@ arma::rowvec GradPenalLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
         }}
               }
   Grad += iGrad;
-      //   Rcpp::Rcout << "i =  "<< i << std::endl;
-      // Rcpp::Rcout << "j =  "<< j << std::endl;
-      //  Rcpp::Rcout << "iRiskNT[j] =  "<< iRiskNT[j] << std::endl;
-      //  Rcpp::Rcout << "iGrad[18] =  "<< iGrad[18] << std::endl;
-       
-      
-       //        Rcpp::Rcout << "iProb1 =  "<< iProb1 << std::endl;
-  //             Rcpp::Rcout << "iProb2 =  "<< iProb2 << std::endl;
-  //             Rcpp::Rcout << "iProb12 =  "<< iProb12 << std::endl;
-    //           Rcpp::Rcout << "iOR =  "<< iOR << std::endl;
-  // Rcpp::Rcout << "iGrad[8] =  "<< iGrad[8] << std::endl;
-  // Rcpp::Rcout << "Grad[8] =  "<< Grad[8] << std::endl;
   }}
-  // arma::rowvec NewPenaltermNT(Q);
-  // arma::rowvec NewPenaltermT(Q);
-  // arma::rowvec NewPenaltermOR(Q);
-  // NewPenaltermNT.fill(penaltermNT[0]);
-  // NewPenaltermT.fill(penaltermT[0]);
-  // NewPenaltermOR.fill(penaltermOR[0]);
   Grad(arma::span(1,Q)) -= penaltermNT.t();
   Grad(arma::span(Q + 1, 2*Q)) -= penaltermT.t();
   Grad(arma::span(2*Q + 1, 3*Q)) -= penaltermOR.t();
-     // for(int q=0; q<Q; ++q)
-     //  {
-     //    Grad[1 + q] -= penaltermNT[q];
-     //    Grad[Q + 1 + q] -= penaltermT[q];
-     //    Grad[2*Q + 1 + q] -= penaltermOR[q];
-     //    Rcpp::Rcout << "Grad[8] =  "<< Grad[8] << std::endl;
-     //  }
-     // Rcpp::Rcout << "Grad[8] =  "<< Grad[8] << std::endl;
-      return(-Grad);
-      }
-          // if (i==0)
-          // {
-          // Rcpp::Rcout << "i =   "<< i << std::endl;
-          // Rcpp::Rcout << "j =   "<< j << std::endl;
-          // Rcpp::Rcout << "iRiskNT[j] =  "<< iRiskNT[j] << std::endl;
-          // Rcpp::Rcout << "iYNT[j] =  "<< iYNT[j] << std::endl;
-          // Rcpp::Rcout << "iYT[j] =  "<< iYT[j] << std::endl;
-          // Rcpp::Rcout << "iProbTafterNT =  "<< iProbTafterNT << std::endl;
-          // Rcpp::Rcout << "iProb1 =  "<< iProb1 << std::endl;
-          // Rcpp::Rcout << "iProb2 =  "<< iProb2 << std::endl;
-          // Rcpp::Rcout << "iProb12 =  "<< iProb12 << std::endl;
-          // Rcpp::Rcout << "iContrib =  "<< iContrib << std::endl;
-          // }
-          // if (i==1)
-          // {
-          // Rcpp::Rcout << "i =  "<< i << std::endl;
-          // Rcpp::Rcout << "j =  "<< j << std::endl;
-          // Rcpp::Rcout << "iRiskNT[j] =  "<< iRiskNT[j] << std::endl;
-          // Rcpp::Rcout << "bnow =  "<< bnow << std::endl;}
-          // Rcpp::Rcout << "iGrad[0] =  "<< iGrad[0] << std::endl;}
-          
-          // Rcpp::Rcout << "bnow =  "<< bnow << std::endl;
-          // //Rcpp::Rcout << "iExpAlphaNT =  "<< iExpAlphaNT << std::endl;
-          // Rcpp::Rcout << "ExpAlphaNTnow =  "<< ExpAlphaNTnow << std::endl;
+  return(-Grad);
+}
+  

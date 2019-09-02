@@ -4,7 +4,7 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @export
 // [[Rcpp::export]]
-arma::rowvec GradPenalLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
+arma::mat GradPenalLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
                       arma::vec YT, arma::vec YNT, 
                    arma::mat XNT, arma::mat XT, arma::mat XOR,
                    arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR)
@@ -78,7 +78,7 @@ arma::rowvec GradPenalLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uve
  // Rcpp::Rcout << "ExpAlphaNT:  "<< ExpAlphaNT << std::endl;
   for (int i = 0; i < n; ++i)
   {
-//    Rcpp::Rcout << "i =   "<< i << std::endl;
+   // Rcpp::Rcout << "i =   "<< i << std::endl;
     int iID = IDunq[i]; // get observation ID
     // Get all data on that observation
     arma::uvec pos = find(ID==iID); // rows associated with the observation
@@ -98,6 +98,7 @@ arma::rowvec GradPenalLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uve
      arma::vec iRiskNT = arma::ones<arma::vec>(iJ);
   for (int j = 0; j < iJ; ++j)
   {
+    // Rcpp::Rcout << "j =   "<< j << std::endl;
     int jTM = iTM[j]-1;
     ExpAlphaNTnow = iExpAlphaNT[jTM];
     ExpAlphaTnow = iExpAlphaT[jTM];
