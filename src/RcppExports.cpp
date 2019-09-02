@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // GradParamLogLikPersTimeDep
-arma::rowvec GradParamLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM, arma::vec YT, arma::vec YNT, arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR);
-RcppExport SEXP _LongitSemiComp_GradParamLogLikPersTimeDep(SEXP paramSEXP, SEXP IDSEXP, SEXP TMSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP, SEXP epsORSEXP) {
+arma::mat GradParamLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM, arma::vec YT, arma::vec YNT, arma::mat XNT, arma::mat XT, arma::mat XOR, double epsOR);
+RcppExport SEXP _LongitSemiComp_GradParamLogLikPersTimeDep(SEXP paramSEXP, SEXP IDSEXP, SEXP TMSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP epsORSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,11 +20,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type XNT(XNTSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type XT(XTSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type XOR(XORSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type TimeBase(TimeBaseSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type TimePen(TimePenSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< double >::type epsOR(epsORSEXP);
-    rcpp_result_gen = Rcpp::wrap(GradParamLogLikPersTimeDep(param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR));
+    rcpp_result_gen = Rcpp::wrap(GradParamLogLikPersTimeDep(param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -134,7 +131,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // GradPenalLogLikPersTimeDep
-arma::rowvec GradPenalLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM, arma::vec YT, arma::vec YNT, arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR);
+arma::mat GradPenalLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM, arma::vec YT, arma::vec YNT, arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR);
 RcppExport SEXP _LongitSemiComp_GradPenalLogLikPersTimeDep(SEXP paramSEXP, SEXP IDSEXP, SEXP TMSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP, SEXP epsORSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -524,7 +521,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_LongitSemiComp_GradParamLogLikPersTimeDep", (DL_FUNC) &_LongitSemiComp_GradParamLogLikPersTimeDep, 12},
+    {"_LongitSemiComp_GradParamLogLikPersTimeDep", (DL_FUNC) &_LongitSemiComp_GradParamLogLikPersTimeDep, 9},
     {"_LongitSemiComp_GradParamLogLikTimeDep", (DL_FUNC) &_LongitSemiComp_GradParamLogLikTimeDep, 9},
     {"_LongitSemiComp_GradPenalLogLik", (DL_FUNC) &_LongitSemiComp_GradPenalLogLik, 12},
     {"_LongitSemiComp_GradPenalLogLikNullModelOR", (DL_FUNC) &_LongitSemiComp_GradPenalLogLikNullModelOR, 11},

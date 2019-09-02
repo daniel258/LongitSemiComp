@@ -2,8 +2,8 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
-GradParamLogLikPersTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
-    .Call('_LongitSemiComp_GradParamLogLikPersTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
+GradParamLogLikPersTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR) {
+    .Call('_LongitSemiComp_GradParamLogLikPersTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR)
 }
 
 #' @export
