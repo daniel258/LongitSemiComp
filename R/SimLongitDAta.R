@@ -158,7 +158,8 @@ SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, al
     Xcln[indicesY, 2] <- X.time.dep[i, 1:nobs.i]
     temp.ind <- temp.ind + nobs.i
   }
-  return(list(X = Xcln, YNT = YNTcln, YT = YTcln, ID = ID, TM = TM, cens = cens))
+  df.return <- data.frame(X = Xcln, YNT = YNTcln, YT = YTcln, ID = ID, TM = TM) 
+  return(list(df.return = df.return, cens = cens))
 }
 
 #' @export
