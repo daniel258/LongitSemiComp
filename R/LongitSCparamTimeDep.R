@@ -64,7 +64,7 @@ LongitSCparamTimeDep <- function(times = NULL,  formula.NT, formula.T,
                                                ID = ID, epsOR = epsOR)
     fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
     fit$se.rob <- sqrt(diag(fit$v.hat))
-    hess.no.penal <- numDeriv::hessian(func = ParamLogLikTimeDep, x = res.opt$par, 
+    hess.no.penal <- numDeriv::jacobian(func = GradParamLogLikTimeDep, x = res.opt$par, 
                                        YT = YT, YNT = YNT, TM = TM,  
                                        XNT = XNTmat,  XT = XTmat, 
                                        XOR = XORmat,
