@@ -60,6 +60,9 @@ double ParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
     arma::vec iRiskNT = arma::ones<arma::vec>(iJ);
     for (int j = 0; j < iJ; ++j)
     {
+      // Rcpp::Rcout << "i  "<< i << std::endl;
+      // Rcpp::Rcout << "j  "<< j << std::endl;
+      // Rcpp::Rcout << "iRiskNT[j]  "<< iRiskNT[j] << std::endl;
       int jTM = iTM[j]-1;
       ExpAlphaNTnow = iExpAlphaNT[jTM];
       ExpAlphaTnow = iExpAlphaT[jTM];
@@ -69,6 +72,8 @@ double ParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
       ExpXBetaORnow = iExpXBetaOR[j];
       if (iRiskNT[j]==0) {
         iProbTafterNT = (ExpAlphaTnow*ExpXBetaTnow*exp(betay)) / (1 + (ExpAlphaTnow*ExpXBetaTnow*exp(betay)));
+        if (j < iJ) { 
+          iRiskNT[j+1] = 0;}
         if(iYT[j]==1) {
           iContrib = log(iProbTafterNT);
         }
