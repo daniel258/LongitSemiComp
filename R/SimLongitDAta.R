@@ -73,7 +73,7 @@ SimLongitDataParam <- function(n.sample, J,  beta.y,  alpha.nt, alpha.t, alpha.o
 #' @param beta.t Covariate effects on the terminal event
 #' @param beta.or Covariate effects on the odds ratio
 SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or,
-                                 cens.poten.rate = 0.5) # cens.poten.rate is not really the censrate
+                                 cens.poten.rate = 0) # cens.poten.rate is not really the censrate
 {
   # This function is different than those I previoulsy used by the fact it has
   # A time-dependent covariate
