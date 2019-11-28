@@ -3,7 +3,7 @@ FindStatusTimeDep <- function(ID, YNT, YT)
 {
   status <- vector(length = length(unique(ID)))
   i = 0
-  for (iID in ID)
+  for (iID in unique(ID))
   {
     i <- i + 1
     iYNT <- YNT[ID==iID]
