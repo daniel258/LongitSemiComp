@@ -223,10 +223,11 @@ arma::mat GradPenalLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec T
                     (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
                       (2*(iOR - 1)*(iOR - 1)*(1 - iProb1 - iProb2 + iProb12));
         }}}
+    iGrad(arma::span(1,Q)) -= penaltermNT.t()/n;
+    iGrad(arma::span(Q + 1, 2*Q)) -= penaltermT.t()/n;
+    iGrad(arma::span(2*Q + 1, 3*Q)) -= penaltermOR.t()/n;
+    GradSquare += iGrad.t()*iGrad;
   }}
-  iGrad(arma::span(1,Q)) -= penaltermNT.t()/n;
-  iGrad(arma::span(Q + 1, 2*Q)) -= penaltermT.t()/n;
-  iGrad(arma::span(2*Q + 1, 3*Q)) -= penaltermOR.t()/n;
-  GradSquare += iGrad.t()*iGrad;
+  
   return(GradSquare);
 }

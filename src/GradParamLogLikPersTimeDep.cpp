@@ -196,8 +196,8 @@ arma::mat GradParamLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec T
               iGrad(arma::span(3*J + pNT + pT + 1, 3*J + pNT + pT + pOR)) =  iXORnow*iOR*
                 (((iOR-1)*((iProb1 + iProb2) - ((1+cij)*(iProb1 + iProb2) - 2*iProb1*iProb2*(2*iOR-1))/nuij)) - 1 - cij + nuij ) /
                   (2*(iOR - 1)*(iOR - 1)*(1 - iProb1 - iProb2 + iProb12));
-            }}
-        }}}
-  GradSquare += iGrad.t()*iGrad;
+            }}}
+        GradSquare += iGrad.t()*iGrad;      
+        }}
   return(GradSquare);
 }

@@ -89,9 +89,9 @@ arma::rowvec GradParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM
     iGrad.fill(0);
     if (iRiskNT[j]==0) {
           iProbTafterNT = (ExpAlphaTnow*ExpXBetaTnow*exp(betay)) / (1 + (ExpAlphaTnow*ExpXBetaTnow*exp(betay)));
-      if (j < iJ) { 
-        iRiskNT[j+1] = 0;}
-          if(iYT[j]==1) {
+        if (j < iJ) { 
+          iRiskNT[j+1] = 0;}
+        if(iYT[j]==1) {
             iGrad[0] = 1-iProbTafterNT;
             iGrad[J + jTM + 1] = (1-iProbTafterNT);
             iGrad(arma::span(3*J + pNT + 1, 3*J + pNT + pT)) = iXTnow*(1-iProbTafterNT);
