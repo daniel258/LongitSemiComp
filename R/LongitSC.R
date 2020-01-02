@@ -88,10 +88,15 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                                         TimePen = S.penal, lambda = lambda)
     fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
     fit$se.rob <- sqrt(diag(fit$v.hat))
-    hess.no.penal <- numDeriv::hessian(func = PenalLogLikNullModelOR, x = res.opt$par, epsOR = epsOr,
-                                       XNT = XNTmat, XT = XTmat,# XOR = XORmat,
-                                       YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
-                                       TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
+    # hess.no.penal <- numDeriv::hessian(func = PenalLogLikNullModelOR, x = res.opt$par, epsOR = epsOr,
+    #                                    XNT = XNTmat, XT = XTmat,# XOR = XORmat,
+    #                                    YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
+    #                                    TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
+    hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLikNullModelOR, x = res.opt$par, epsOR = epsOr,
+                                        XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                                        #        XinterMat = XinterMat,
+                                        YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
+                                        TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
     # hess.penal <- numDeriv::hessian(func = PenalLogLik, x = res.opt$par, epsOR = epsOr,XNT = XNTmat, XT = XTmat, XOR = XORmat,
     #                                 YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
     #                                 TimeBase = Bsplines,  TimePen = S.penal, lambda = lambda)
@@ -155,11 +160,16 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                                       TimePen = S.penal, lambda = lambda)
   fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
   fit$se.rob <- sqrt(diag(fit$v.hat))
-  hess.no.penal <- numDeriv::hessian(func = PenalLogLikWithInter, x = res.opt$par, epsOR = epsOr,
-                                     XNT = XNTmat, XT = XTmat, XOR = XORmat,
-                                     XinterMat = XinterMat,
-                                     YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
-                                     TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
+  # hess.no.penal <- numDeriv::hessian(func = PenalLogLikWithInter, x = res.opt$par, epsOR = epsOr,
+  #                                    XNT = XNTmat, XT = XTmat, XOR = XORmat,
+  #                                    XinterMat = XinterMat,
+  #                                    YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
+  #                                    TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
+  hess.no.penal <- numDeriv::jacobian(func = PenalLogLikWithInter, x = res.opt$par, epsOR = epsOr,
+                                      XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                                      #        XinterMat = XinterMat,
+                                      YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
+                                      TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
   if(!identical(dim(hess.no.penal), dim(res.opt$hessian))) {
     fit$df <- 0 # Indicates a problem
   } else {
@@ -214,11 +224,11 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                                         TimePen = S.penal, lambda = lambda)
     fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
     fit$se.rob <- sqrt(diag(fit$v.hat))
-    hess.no.penal <- numDeriv::hessian(func = PenalLogLik, x = res.opt$par, epsOR = epsOr,
-                                       XNT = XNTmat, XT = XTmat, XOR = XORmat,
-                               #        XinterMat = XinterMat,
-                                       YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
-                                       TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
+    hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLik, x = res.opt$par, epsOR = epsOr,
+                                        XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                                        #        XinterMat = XinterMat,
+                                        YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
+                                        TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
     if(!identical(dim(hess.no.penal), dim(res.opt$hessian))) {
       fit$df <- 0 # Indicates a problem
     } else {
