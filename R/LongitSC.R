@@ -1,6 +1,6 @@
 #' @export
 LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, 
-                     formula.inter.gamma = NULL,
+                     formula.inter.gamma = NULL, 
                      data, epsOr = 10^(-10),
                      knots = NULL, lambda = 0, init = NULL, maxit.optim = 50000)
 {
