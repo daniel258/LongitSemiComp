@@ -1,5 +1,58 @@
-# Daniel Nevo
-#inter.vec - interval used for the grouping of the events into longit
+#' @title Transfomring semicompeting risks outcome data to longitudinal bivariate binary representation
+#' @description Given observed non-terminal and terminal event times, censoring indicators and possible left-truncation, 
+#' this function returns the outcome data in the longitudinal bivariate binary representation according to given interval partition
+#'  as proposed in Nevo et al.
+#' @param T1 Observed non-terminal event time.
+#' @param T2 Observed terminal event time.
+#' @param delta1 Non-terminal event indicator (1: no-terminal event 0: censored)
+#' @param delta2 Terminal event indicator (1: no-terminal event 0: censored)
+#' @param inter.vec Partition points creating the interval.
+#' @param TruncData Logical. Is the data include left truncation?
+#' @param TruncTime Truncation time. Only used if TruncData==T
+#' @return A list with at-risk indicators for each unit in each interval (risk.NT and risk.T) and outcome data
+#'  at each interval (YNT and YT).
+#' @examples
+#' # Simulate semicompeting risks data
+#' library(MASS)
+#' set.seed(123456)
+#' J = 110
+#' nj = 50
+#' n = J * nj
+#' id <- rep(1:J, each = nj)
+#' kappa1.true <- 0.05
+#' kappa2.true <- 0.01
+#' kappa3.true <- 0.01
+#' alpha1.true <- 0.8
+#' alpha2.true <- 1.1
+#' alpha3.true <- 0.9
+#' beta1.true <- c(0.5, 0.8, -0.5)
+#' beta2.true <- c(0.5, 0.8, -0.5)
+#' beta3.true <- c(1, 1, -1)
+#' SigmaV.true <- matrix(0.25,3,3)
+#' theta.true <- 0.5
+#' cens <- c(90, 90)
+#' cov1 <- matrix(rnorm((length(beta1.true)-1)*n, 0, 1), n, length(beta1.true)-1)
+#' cov2 <- sample(c(0, 1), n, replace = TRUE)
+#' x1 <- as.data.frame(cbind(cov1, cov2))
+#' x2 <- as.data.frame(cbind(cov1, cov2))
+#' x3 <- as.data.frame(cbind(cov1, cov2))
+#' simData <- SemiCompRisks::simID(id, x1, x2, x3, beta1.true, beta2.true, beta3.true, 
+#'                                 alpha1.true, alpha2.true, alpha3.true, 
+#'                                 kappa1.true, kappa2.true, kappa3.true, 
+#'                                 theta.true, SigmaV.true, cens)	
+#' plot(simData$y1, y = simData$y2)
+#' Longit.data <- TimesToLongit(T1 = simData$y1, T2 = simData$y2, delta1 = simData$delta1, 
+#'                              delta2 = simData$delta2, inter.vec = seq(0, 90, 10))
+#' Longit.data$YNT[1:3,]
+#' Longit.data$YT[1:3,]
+#' Longit.data$risk.NT[1:3,]
+#' Longit.data$risk.T[1:3,]
+# \dontrun{
+# if(interactive()){
+#  #EXAMPLE1
+#  }
+# }
+#' @rdname TimesToLongit
 # I want the following two lines in the namespace, can be moved to other files if this script is deleted
 #'@useDynLib LongitSemiComp 
 #'@importFrom Rcpp evalCpp 
@@ -7,8 +60,8 @@
 TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, TruncTime = NULL) # TruncTime is the time of entry to the study
 {
   J <- length(inter.vec)-1
-  YNT <- YT <- matrix(data = 0, nr = length(T1), nc = J)
-  risk.T <- risk.NT <- matrix(data = 1, nr = length(T1), nc = J)
+  YNT <- YT <- matrix(data = 0, nrow = length(T1), ncol = J)
+  risk.T <- risk.NT <- matrix(data = 1, nrow = length(T1), ncol = J)
   if (any(T1 < TruncTime) | any(T2 < TruncTime)) {stop("Data problem: for some observation event time is before truncation time")}
   for (i in 1:length(T1))
   {
@@ -39,60 +92,3 @@ TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, Trunc
   }}
   return(list(YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
 }
-#' @export
-TimesToInter <- function(T1,T2, delta1, delta2, inter.vec)
-{
-  YNT <- YT <- rep(Inf, length(T1))
-  for (i in 1:length(T1))
-  {
-    if(delta1[i]==1)
-    {
-      YNT[i] <- findInterval(T1[i], inter.vec, rightmost.closed = T)
-    }
-    if(delta2[i]==1)
-    {
-      YT[i] <- findInterval(T2[i], inter.vec, rightmost.closed = T)
-    }
-  }
-  return(list(YNT=YNT, YT=YT))
-}
-# Rcpp::cppFunction('int FirstOne(NumericVector x) {
-#   int index = 0;
-#   int length = x.size();
-#   for (int i = 0; i < length; i++) {
-#             if(x[i]==1) {
-#             index = i + 1;
-#             break;
-#             }}
-#             return index;
-#             }')
-#' @export
-LongitToTimes <- function(YNT, YT, times) # should add risk set indicator at some point, right now it assumes no censoring or truncation
-{
-  n <- nrow(YNT)
-  J <- length(times)
-  indices.nt <- apply(YNT, 1, FirstOne)
-  indices.t <- apply(YT, 1, FirstOne)
-  delta1 <- delta2 <- T1 <- T2 <- rep(0, n)
-  delta1[indices.nt>0] <- 1
-  delta2[indices.t>0] <- 1
-  for (i in 1:n)
-  {
-  if (i %% 10000==0) {cat("i =" , i, "\n")}
-  T1[i] <- ifelse(indices.nt[i]>0, times[indices.nt[i]] ,times[J])
-  T2[i] <- ifelse(indices.t[i]>0, times[indices.t[i]] ,times[J])
-    #if(T1[i] >T2[i] & T1[i]!=times[J]) {
-  if(T1[i] >T2[i]) {
-    T1[i] <- T2[i]
-  #  warning(paste("T1 time was changes to T2 for observation", i, "T1 = ", T1, " T2 = ", T2 ))
-    }}
-  return(list(T1 = T1, T2 = T2, delta1 = delta1, delta2 = delta2))
-}
-# inter.vec <- c(0,4,10)
-# T1 <- 2
-# T2 <- 7
-# YNT <- YT <- rep(0, length(inter.vec)-1)
-# YNT[inter.vec[-1]>=T1] <- 1
-# YT[inter.vec[-1]>=T2] <- 1
-# YNT
-# YT
