@@ -2,7 +2,6 @@
 using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-//' @export
 // [[Rcpp::export]]
 arma::rowvec GradPenalLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
                       arma::vec YT, arma::vec YNT, 

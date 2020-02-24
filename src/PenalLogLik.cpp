@@ -2,7 +2,6 @@
 using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-//' @export
 // [[Rcpp::export]]
 double PenalLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskNT, arma::mat riskT, 
                    arma::mat XNT, arma::mat XT, arma::mat XOR,

@@ -3,7 +3,6 @@ using namespace Rcpp;
 
 // [[Rcpp::plugins(unwindProtect)]]
 // [[Rcpp::depends(RcppArmadillo)]]
-//' @export
 // [[Rcpp::export]]
 double ParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM,
                           arma::vec YT, arma::vec YNT, 

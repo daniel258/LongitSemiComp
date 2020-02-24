@@ -2,7 +2,6 @@
 using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-//' @export
 // [[Rcpp::export]]
 double ParamLogLikNoX(arma::vec param, arma::mat YNT, arma::mat YT, 
                    arma::mat riskNT, arma::mat riskT, double epsOR)

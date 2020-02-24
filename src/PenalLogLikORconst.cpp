@@ -4,7 +4,6 @@ using namespace Rcpp;
 // PieceWiseTimes: In terms of J, the points that break the intervals j=1,...,J for the piecewise OR effect,
 //E.g., if PieceWiseTimes= (2, 5,7) then, alphaOR is for the intervals 1-2, 3-5, 6-7 8-Inf
 // [[Rcpp::depends(RcppArmadillo)]]
-//' @export
 // [[Rcpp::export]]
 double PenalLogLikORconst(arma::vec param, arma::mat X, arma::mat YNT,
                           arma::mat riskNT, arma::mat riskT, arma::mat YT,

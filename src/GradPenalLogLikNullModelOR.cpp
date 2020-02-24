@@ -2,7 +2,6 @@
 using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-//' @export
 // [[Rcpp::export]]
 arma::vec GradPenalLogLikNullModelOR(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, 
                                      arma::mat YT, arma::mat XNT, arma::mat XT,// arma::mat XOR,  
