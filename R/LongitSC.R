@@ -1,9 +1,32 @@
+#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data
+#' @description The function implments the proposed methodlogy in Nevo et al. (2020+) for time-fixed covaraites under possible 
+#' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary represenation. 
+#' This could be done using \code{TimesToLongit}.
+#' @param longit.data A data.frame or a list with columns named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. 
+#' The function \code{TimesToLongit} can be used to obtain this representation of semicompeting risks time-to-event data.
+#' @param times Vector of increasing times
+#' @param formula.NT A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
+#' for the non terminal probaility sub-model.
+#' @param formula.T A formula of the form \code{YT ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
+#' for the terminal probaility sub-model.
+#' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
+#' for the odds ratio sub-model.
+#' @param data A data.frame with the covariates specfied in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.
+#' @param epsOr How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
+#' @param knots Number of knots for the Bsplines
+#' @param lambda Amount of penalization. Either a vecotr of three values or a single number to use for all three functions
+#' @param init Initial values for the parameters
+#' @param maxit.optim For iternal use of \code{optim}. Default is 5000
+#' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
+#' the time-varying functions and coefficients.
+#' @note For time-varying covariates use \code{LongitSCtimeDep}. For unrestricted baseline functions 
+#' (no Bsplines or penalization) use \code{LongitSCparamTimeDep}
+#'  @author Daniel Nevo
 #' @export
 LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, 
                      data, epsOr = 10^(-10),
                      knots = NULL, lambda = 0, init = NULL, maxit.optim = 50000)
 {
- # m <- match.call()
   if (is.null(knots)) knots <- 5
   if (!is.null(formula.NT)) {
     XNTmat <- as.matrix(model.matrix(formula.NT, data = data)[, -1])
@@ -28,8 +51,8 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   }
    if(length(lambda)==1) lambda <- rep(lambda, 3)
   if(length(lambda)!=3) stop("lambda should be of length 1 or 3")
-  J <- ncol(longit.data$YNT)
-  if (is.null(times)) times <- 1:J
+  K <- ncol(longit.data$YNT)
+  if (is.null(times)) times <- 1:K
   smooth.aux <- mgcv::smooth.construct.ps.smooth.spec(mgcv::s(times,bs="ps", k = knots), data = list(times = times),
                                                       knots = list(times = c(min(times),max(times))))
   S.penal <- smooth.aux$S[[1]]
@@ -53,7 +76,6 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$formula.NT <- formula.NT
     fit$formula.T <- formula.T
     fit$formula.OR <- formula.OR
-    fit$formula.inter.gamma <- formula.inter.gamma
     fit$Bsplines <- Bsplines
     fit$optim.conv <- res.opt$convergence
     fit$est <- res.opt$par
@@ -66,7 +88,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$hess.penal <- res.opt$hessian
     fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
     my.grad.sqrd <- GradPenalLogLikPersNullModelOR(param = res.opt$par, epsOR = epsOr,
-                                        XNT = XNTmat, XT = XTmat, #XOR = XORmat,
+                                        XNT = XNTmat, XT = XTmat, 
                                         YNT = longit.data$YNT, YT = longit.data$YT,
                                         riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                                         TimeBase = Bsplines,
@@ -93,19 +115,14 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$coef.NT <- fit$est[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
     fit$coef.T <- fit$est[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
     fit$coef.OR <- NULL
-    #fit$coef.OR <- fit$est[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
     fit$se.longterm <- fit$se.rob[1]
     fit$se.rob.NT <- fit$se.rob[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
     fit$se.rob.T <- fit$se.rob[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
     fit$se.rob.OR <- NULL
-    #fit$se.rob.OR <- fit$se.rob[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
-    # calculate ci for the baseline prob.T1, prob.T2 and OR.
-    # Using the appropoiate transformation of the CI for B%*%alpha
-  } else {
-    
+    } else {
     res.opt <- optim(par = init, fn = PenalLogLik, gr = GradPenalLogLik, hessian = T,
                      control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOr,
-                     XNT = XNTmat, XT = XTmat, XOR = XORmat,# XinterMat = XinterMat,
+                     XNT = XNTmat, XT = XTmat, XOR = XORmat,
                      YNT = longit.data$YNT, YT = longit.data$YT,
                      riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                      TimeBase = Bsplines,
@@ -114,13 +131,11 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$formula.NT <- formula.NT
     fit$formula.T <- formula.T
     fit$formula.OR <- formula.OR
-    fit$formula.inter.gamma <- formula.inter.gamma
     fit$Bsplines <- Bsplines
     fit$optim.conv <- res.opt$convergence
     fit$est <- res.opt$par
     fit$penal.lik <- -res.opt$value 
     fit$lik <- PenalLogLik(param = fit$est, epsOR = epsOr, XNT = XNTmat, XT = XTmat, XOR = XORmat,
-                           #XinterMat = XinterMat,
                            YNT = longit.data$YNT, YT = longit.data$YT, 
                            riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                            TimeBase = Bsplines,
@@ -129,7 +144,6 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
     my.grad.sqrd <- GradPenalLogLikPers(param = res.opt$par, epsOR = epsOr,
                                         XNT = XNTmat, XT = XTmat, XOR = XORmat,
-                                #        XinterMat = XinterMat,
                                         YNT = longit.data$YNT, YT = longit.data$YT,
                                         riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                                         TimeBase = Bsplines,
@@ -138,14 +152,13 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$se.rob <- sqrt(diag(fit$v.hat))
     hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLik, x = res.opt$par, epsOR = epsOr,
                                         XNT = XNTmat, XT = XTmat, XOR = XORmat,
-                                        #        XinterMat = XinterMat,
-                                        YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
+                                        YNT = longit.data$YNT, YT = longit.data$YT, 
+                                        riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                                         TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
     if(!identical(dim(hess.no.penal), dim(res.opt$hessian))) {
       fit$df <- 0 # Indicates a problem
     } else {
       fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
-      #print(fit$df)
     }
     fit$aic <- -2*fit$lik - 2*fit$df # lik is minus the log-likelihood without the peanlty
     fit$coef.longterm <-  fit$est[1]
@@ -155,12 +168,10 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$coef.NT <- fit$est[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
     fit$coef.T <- fit$est[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
     fit$coef.OR <- fit$est[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
- #   fit$coef.inter.longterm <- fit$est[(1 + 3*Q + pNT + pT + pOR + 1):(1 + 3*Q + pNT + pT + pOR + p.inter.gamma)]
     fit$se.longterm <- fit$se.rob[1]
     fit$se.rob.NT <- fit$se.rob[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
     fit$se.rob.T <- fit$se.rob[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
     fit$se.rob.OR <- fit$se.rob[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
-#    fit$se.rob.longterm.inter <- fit$se.rob[(1 + 3*Q + pNT + pT + pOR + 1):(1 + 3*Q + pNT + pT + pOR + p.inter.gamma)]
   }
   # calculate ci for the baseline prob.T1, prob.T2 and OR.
   # Using the appropoiate transformation of the CI for B%*%alpha
@@ -179,9 +190,6 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                           qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.OR%*%t(Bsplines))))
   fit$ci.H.alpha.OR <- exp(Bsplines%*%fit$est[(1 + 2*Q + 1):(1 + 3*Q)] +
                           qnorm(0.975)*sqrt(diag(Bsplines%*%sub.vhat.OR%*%t(Bsplines))))
-  # fit$ci.base.NT <- c(ci.L.alpha.NT, ci.H.alpha.NT)
-  # fit$ci.base.T <- c(ci.L.alpha.T, ci.H.alpha.T)
-  # fit$ci.base.OR <- c(ci.L.alpha.OR, ci.H.alpha.OR)
   if (pNT==1) {
     names(fit$coef.NT) <- names(fit$se.rob.NT) <- all.vars(formula.NT)} else {
       names(fit$coef.NT) <- names(fit$se.rob.NT) <- colnames(XNTmat)}
