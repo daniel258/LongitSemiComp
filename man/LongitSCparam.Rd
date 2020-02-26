@@ -3,10 +3,10 @@
 \name{LongitSCparam}
 \alias{LongitSCparam}
 \title{The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-fixed covaraites
-and using unrestricted time-varying functions.}
+and using unrestricted (per-interval parameter) time-varying functions.}
 \usage{
 LongitSCparam(longit.data, times = NULL, formula.NT, formula.T,
-  formula.OR = NULL, data, epsOr = 10^(-10), knots = NULL,
+  formula.OR = NULL, data, epsOR = 10^(-10), knots = NULL,
   lambda = 0, init = NULL, maxit.optim = 50000)
 }
 \arguments{
@@ -27,7 +27,7 @@ for the odds ratio sub-model.}
 
 \item{data}{A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.}
 
-\item{epsOr}{How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}}
+\item{epsOR}{How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}}
 
 \item{knots}{Number of knots for the Bsplines}
 

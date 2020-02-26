@@ -1,23 +1,31 @@
-#' @title The function that simulates data form longitudinal bivariate binary semicompeting risks data with time-varying covarites
-#' and unrestricted (per-interval parametr) time-varying functions.
-#' @description Given observed non-terminal and terminal event times, and time-depending covaraites, this function implments
-#' theta proposed longitudinal bivariate binary representation according to given interval partition  in Nevo et al.
-#' @param n.sample Desired sample size.
-#' @param times A vector of increasing times. Normally of equal length
-#' @param alpha.nt True value for \eqn{\alpha_1(t)} for each \eqn{t} in \code{times}.
-#' @param alpha.t True value for \eqn{\alpha_2(t)} for each \eqn{t} in \code{times}.
-#' @param alpha.or True value for \eqn{\alpha_\theta(t)} for each \eqn{t} in \code{times}.
-#' @param beta.nt True value for \eqn{\beta_1}. 
-#' @param beta.t True value for \eqn{\beta_2}.
-#' @param beta.or True value for \eqn{\beta_\theta}.
-#' @param beta.y True value for \eqn{\beta_y}.
-#' @param cens.poten.rate Potential cenosoring rate. At each time interval the probability of each alive observation to be censored
-#' @return A list with two objects: \code{df.return} returns the data in a way similiat to counting process presentation, 
-#' each unique \code{ID} has multiple rows, one for each interval. A time-fixed normally distributed random variable and 
-#' a binary time-dependent covariate simulated as described in Nevo et al (\code{X}). The outcome data at each interval
-#'  is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
-#'  This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
-#'  track of the censoring rate when simulating data. 
+#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-dependening 
+#' covariates, and using unrestricted (per-interval parameter) time-varying functions.
+#' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
+#' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
+#' This could be done using \code{TimesToLongit}. This function uses B-splines representation the time-varying functions
+#' and implements penalized maximum likelihood to fit the model.
+#' @param data A data.frame or a list with columns named \code{ID}, \code{TM}   \code{YNT}, \code{YT} as well as all covariate 
+#' names used in \code{formula.NT}, \code{formula.T} and \code{formula.OR}. See details below. Other names can be used for
+#'  \code{YNT}, \code{YT}, but then their names should be given in the formulas below.
+#' @param times Vector of increasing times (for example, the interval partition points \eqn{\tau_1,}..., \eqn{\tau_K}).
+#' This vector is used to construct the B-splines
+#' @param formula.NT A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
+#' for the non terminal probability sub-model.
+#' @param formula.T A formula of the form \code{YT ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
+#' for the terminal probability sub-model.
+#' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
+#' for the odds ratio sub-model.
+#' @param epsOR How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
+#' @param init Initial values for the parameters.
+#' @param maxit.optim For internal use of \code{optim}. Default is 50000
+#' @details For \code{data}, the represenation is similiar for the counting process represenation for survival data. 
+#' \code{ID} identify each person, where \code{TM} identifes the intervals in which this person is under followup.
+#'  \code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
+#'  See examples in  \code{\link{SimLongitDataTimeDep}} 
+#' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
+#' the time-varying functions and coefficients.
+#' @note  For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
+#' For time-fixed covariates use \code{\link{LongitSCtimeDep}}.
 #'  @author Daniel Nevo
 #'   @export
 LongitSCparamTimeDep <- function(times = NULL, data, formula.NT, formula.T, 

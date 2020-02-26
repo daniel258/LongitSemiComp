@@ -1,5 +1,5 @@
 #' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-fixed covaraites
-#' and using unrestricted (per-interval parametr) time-varying functions.
+#' and using unrestricted (per-interval parameter) time-varying functions.
 #' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
 #' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
 #' This could be done using \code{TimesToLongit}. This function does not restricet the time-varying functions, and assume a

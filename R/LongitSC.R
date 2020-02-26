@@ -16,7 +16,7 @@
 #' for the odds ratio sub-model.
 #' @param data A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.
 #' @param epsOR How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
-#' @param knots Number of knots for the Bsplines
+#' @param knots Number of knots for the B-splines.
 #' @param lambda Penalization level. Either a vector of three values or a single number to be used for all three time-varying 
 #' functions.
 #' @param init Initial values for the parameters.

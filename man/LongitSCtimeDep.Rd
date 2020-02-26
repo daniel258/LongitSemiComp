@@ -26,16 +26,16 @@ for the terminal probability sub-model.}
 \item{formula.OR}{A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
 for the odds ratio sub-model.}
 
-\item{knots}{Number of knots for the Bsplines.}
+\item{epsOR}{How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}}
 
-\item{lambda}{Penalization level. Either a vector of three values or a single number to be used for all three time-varying 
+\item{knots}{Number of knots for the B-splines.}
+
+\item{lambda}{Penalization level for the penalized maximum likelihood. Either a vector of three values or a single number to be used for all three time-varying 
 functions.}
 
 \item{init}{Initial values for the parameters.}
 
 \item{maxit.optim}{For internal use of \code{optim}. Default is 50000}
-
-\item{epsOr}{How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}}
 }
 \value{
 The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
@@ -51,7 +51,7 @@ and implements penalized maximum likelihood to fit the model.
 For \code{data}, the represenation is similiar for the counting process represenation for survival data. 
 \code{ID} identify each person, where \code{TM} identifes the intervals in which this person is under followup.
  \code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
- See examples in  \code{\link{s2a}}
+ See examples in  \code{\link{SimLongitDataTimeDep}}
 }
 \note{
 For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
