@@ -3,10 +3,10 @@ Title: BIVARIATE LONGITUDINAL ANALYSIS OF SEMI COMPETING RISKS DATA
 Version: 0.0.0.9016
 Authors@R: person("Daniel", "Nevo", email = "danielnevo@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
-Depends: R (>= 3.4.0)
-Imports: Rcpp
+Depends: MASS, R (>= 3.4.0)
+Imports: Rcpp, mgcv, numDeriv, SemiCompRisks
 LinkingTo: Rcpp, RcppArmadillo
-License: What license is it under?
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
