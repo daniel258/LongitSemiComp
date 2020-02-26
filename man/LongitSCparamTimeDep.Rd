@@ -15,7 +15,7 @@ This vector is used to construct the B-splines}
 
 \item{data}{A data.frame or a list with columns named \code{ID}, \code{TM}   \code{YNT}, \code{YT} as well as all covariate 
 names used in \code{formula.NT}, \code{formula.T} and \code{formula.OR}. See details below. Other names can be used for
- \code{YNT}, \code{YT}, but then their names should be given in the formulas below.}
+\code{YNT}, \code{YT}, but then their names should be given in the formulas below.}
 
 \item{formula.NT}{A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
 for the non terminal probability sub-model.}
@@ -45,12 +45,13 @@ parameter for each interval. As a result, it contains more parameters and carry 
 \details{
 For \code{data}, the represenation is similiar for the counting process represenation for survival data. 
 \code{ID} identify each person, where \code{TM} identifes the intervals in which this person is under followup.
- \code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
- See examples in  \code{\link{SimLongitDataTimeDep}}
+\code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
+See examples in  \code{\link{SimLongitDataTimeDep}}
 }
 \note{
 For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
 For time-fixed covariates use \code{\link{LongitSCtimeDep}}.
- @author Daniel Nevo
-  @export
+}
+\author{
+Daniel Nevo
 }

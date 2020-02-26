@@ -3,7 +3,7 @@
 \name{LongitSC}
 \alias{LongitSC}
 \title{The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-fixed covariates
- and using P-splines for the time-varying functions.}
+and using P-splines for the time-varying functions.}
 \usage{
 LongitSC(longit.data, times = NULL, formula.NT, formula.T,
   formula.OR = NULL, data, epsOR = 10^(-10), knots = NULL,
@@ -52,10 +52,12 @@ Each of the matrices in \code{longit.data},  \code{risk.NT}, \code{risk.T},  \co
 unit and a column for each interval. Then, \code{risk.NT} and \code{risk.T} indicate whether the unit is at risk in each interval
 for each of the events, respectively.  The matrices \code{YNT} and \code{YT} indicate whether the non-terminal and terminal
 event, respectively, were obsreved by the end of each interval.
- The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data.
+The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data.
 }
 \note{
 For time-varying covariates use \code{\link{LongitSCtimeDep}}. For unrestricted baseline functions 
 (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
- @author Daniel Nevo
+}
+\author{
+Daniel Nevo
 }

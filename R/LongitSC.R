@@ -1,5 +1,5 @@
 #' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-fixed covariates
-#'  and using P-splines for the time-varying functions.
+#' and using P-splines for the time-varying functions.
 #' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
 #' right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
 #' This could be done using \code{\link{TimesToLongit}}. The \code{LongitSC} function uses B-splines representation the time-varying 
@@ -24,12 +24,12 @@
 #' unit and a column for each interval. Then, \code{risk.NT} and \code{risk.T} indicate whether the unit is at risk in each interval
 #' for each of the events, respectively.  The matrices \code{YNT} and \code{YT} indicate whether the non-terminal and terminal
 #' event, respectively, were obsreved by the end of each interval.
-#'  The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data. 
+#' The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data. 
 #' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
 #' the time-varying functions and coefficients.
 #' @note For time-varying covariates use \code{\link{LongitSCtimeDep}}. For unrestricted baseline functions 
 #' (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
-#'  @author Daniel Nevo
+#' @author Daniel Nevo
 #' @export
 LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, data,
                      epsOR = 10^(-10),

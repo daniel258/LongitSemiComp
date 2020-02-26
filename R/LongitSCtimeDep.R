@@ -3,11 +3,11 @@
 #' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-depending covariates under 
 #' possible right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation,
 #' similiar to the counting-process representation. See details below.
-#'  The \code{LongitSCtimeDep} function uses B-splines representation the time-varying functions
+#' The \code{LongitSCtimeDep} function uses B-splines representation the time-varying functions
 #' and implements penalized maximum likelihood to fit the model.
 #' @param data A data.frame or a list with columns named \code{ID}, \code{TM}   \code{YNT}, \code{YT} as well as all covariate 
 #' names used in \code{formula.NT}, \code{formula.T} and \code{formula.OR}. See details below. Other names can be used for
-#'  \code{YNT}, \code{YT}, but then their names should be given in the formulas below.
+#' \code{YNT}, \code{YT}, but then their names should be given in the formulas below.
 #' @param times Vector of increasing times (for example, the interval partition points \eqn{\tau_1,}..., \eqn{\tau_K}).
 #' This vector is used to construct the B-splines
 #' @param formula.NT A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
@@ -24,13 +24,13 @@
 #' @param maxit.optim For internal use of \code{optim}. Default is 50000
 #' @details For \code{data}, the represenation is similiar for the counting process represenation for survival data. 
 #' \code{ID} identify each person, where \code{TM} identifes the intervals in which this person is under followup.
-#'  \code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
+#' \code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
 #'  See examples in  \code{\link{SimLongitDataTimeDep}} 
 #' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
 #' the time-varying functions and coefficients.
 #' @note  For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
 #' For time-fixed covariates use \code{\link{LongitSCtimeDep}}.
-#'  @author Daniel Nevo
+#' @author Daniel Nevo
 #' @export
 LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T, 
                             formula.OR = NULL, epsOR = 10^(-10),
