@@ -15,7 +15,7 @@
 #' for the terminal probability sub-model.
 #' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
 #' for the odds ratio sub-model.
-#' @param epsOr How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
+#' @param epsOR How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
 #' @param knots Number of knots for the Bsplines.
 #' @param lambda Penalization level. Either a vector of three values or a single number to be used for all three time-varying 
 #' functions.
@@ -32,8 +32,8 @@
 #'  @author Daniel Nevo
 #' @export
 #' @export
-LongitSCtimeDep <- function(times = NULL,  formula.NT, formula.T, 
-                            formula.OR = NULL, data, epsOR = 10^(-10),
+LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T, 
+                            formula.OR = NULL, epsOR = 10^(-10),
                      knots = NULL, lambda = 0, init = NULL, maxit.optim = 50000)
 {
   if (is.null(knots)) knots <- 5
