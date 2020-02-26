@@ -15,7 +15,7 @@
 #' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
 #' for the odds ratio sub-model.
 #' @param data A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.
-#' @param epsOr How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
+#' @param epsOR How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
 #' @param knots Number of knots for the Bsplines
 #' @param lambda Penalization level. Either a vector of three values or a single number to be used for all three time-varying 
 #' functions.
@@ -27,8 +27,8 @@
 #' (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
 #'  @author Daniel Nevo
 #' @export
-LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, 
-                     data, epsOr = 10^(-10),
+LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, data,
+                     epsOR = 10^(-10),
                      knots = NULL, lambda = 0, init = NULL, maxit.optim = 50000)
 {
   if (is.null(knots)) knots <- 5
@@ -70,7 +70,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   }
   if (pOR==0) {
     res.opt <- optim(par = init, fn = PenalLogLikNullModelOR, gr = GradPenalLogLikNullModelOR, hessian = T,
-                     control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOr,
+                     control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOR,
                      XNT = XNTmat, XT = XTmat, 
                      YNT = longit.data$YNT, YT = longit.data$YT,
                      riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
@@ -84,14 +84,14 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$optim.conv <- res.opt$convergence
     fit$est <- res.opt$par
     fit$penal.lik <- -res.opt$value 
-    fit$lik <- PenalLogLikNullModelOR(param = fit$est, epsOR = epsOr, XNT = XNTmat, XT = XTmat, #XOR = XORmat,
+    fit$lik <- PenalLogLikNullModelOR(param = fit$est, epsOR = epsOR, XNT = XNTmat, XT = XTmat, #XOR = XORmat,
                            YNT = longit.data$YNT, YT = longit.data$YT, 
                            riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                            TimeBase = Bsplines,
                            TimePen = S.penal, lambda = rep(0,3)) # used for aic
     fit$hess.penal <- res.opt$hessian
     fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
-    my.grad.sqrd <- GradPenalLogLikPersNullModelOR(param = res.opt$par, epsOR = epsOr,
+    my.grad.sqrd <- GradPenalLogLikPersNullModelOR(param = res.opt$par, epsOR = epsOR,
                                         XNT = XNTmat, XT = XTmat, 
                                         YNT = longit.data$YNT, YT = longit.data$YT,
                                         riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
@@ -99,7 +99,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                                         TimePen = S.penal, lambda = lambda)
     fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
     fit$se.rob <- sqrt(diag(fit$v.hat))
-    hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLikNullModelOR, x = res.opt$par, epsOR = epsOr,
+    hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLikNullModelOR, x = res.opt$par, epsOR = epsOR,
                                         XNT = XNTmat, XT = XTmat, XOR = XORmat,
                                         YNT = longit.data$YNT, YT = longit.data$YT, riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                                         TimeBase = Bsplines,  TimePen = S.penal, lambda = 0)
@@ -125,7 +125,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$se.rob.OR <- NULL
     } else {
     res.opt <- optim(par = init, fn = PenalLogLik, gr = GradPenalLogLik, hessian = T,
-                     control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOr,
+                     control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOR,
                      XNT = XNTmat, XT = XTmat, XOR = XORmat,
                      YNT = longit.data$YNT, YT = longit.data$YT,
                      riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
@@ -139,14 +139,14 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$optim.conv <- res.opt$convergence
     fit$est <- res.opt$par
     fit$penal.lik <- -res.opt$value 
-    fit$lik <- PenalLogLik(param = fit$est, epsOR = epsOr, XNT = XNTmat, XT = XTmat, XOR = XORmat,
+    fit$lik <- PenalLogLik(param = fit$est, epsOR = epsOR, XNT = XNTmat, XT = XTmat, XOR = XORmat,
                            YNT = longit.data$YNT, YT = longit.data$YT, 
                            riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                            TimeBase = Bsplines,
                            TimePen = S.penal, lambda = rep(0,3)) # used for aic
     fit$hess.penal <- res.opt$hessian
     fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
-    my.grad.sqrd <- GradPenalLogLikPers(param = res.opt$par, epsOR = epsOr,
+    my.grad.sqrd <- GradPenalLogLikPers(param = res.opt$par, epsOR = epsOR,
                                         XNT = XNTmat, XT = XTmat, XOR = XORmat,
                                         YNT = longit.data$YNT, YT = longit.data$YT,
                                         riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
@@ -154,7 +154,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
                                         TimePen = S.penal, lambda = lambda)
     fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
     fit$se.rob <- sqrt(diag(fit$v.hat))
-    hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLik, x = res.opt$par, epsOR = epsOr,
+    hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLik, x = res.opt$par, epsOR = epsOR,
                                         XNT = XNTmat, XT = XTmat, XOR = XORmat,
                                         YNT = longit.data$YNT, YT = longit.data$YT, 
                                         riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
