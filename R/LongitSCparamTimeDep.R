@@ -1,9 +1,9 @@
-#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-dependening 
-#' covariates, and using unrestricted (per-interval parameter) time-varying functions.
-#' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
-#' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
-#' This could be done using \code{TimesToLongit}. This function uses B-splines representation the time-varying functions
-#' and implements penalized maximum likelihood to fit the model.
+#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-depending 
+#' covariates and using unrestricted (per-interval parameter) time-varying functions.
+#' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-depending covariates under
+#' possible right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation,
+#' similiar to the counting-process representation. See details below. This function does not restrict the time-varying functions and estimates
+#' parameter for each interval. As a result, it contains more parameters and carry out parametric inference.
 #' @param data A data.frame or a list with columns named \code{ID}, \code{TM}   \code{YNT}, \code{YT} as well as all covariate 
 #' names used in \code{formula.NT}, \code{formula.T} and \code{formula.OR}. See details below. Other names can be used for
 #'  \code{YNT}, \code{YT}, but then their names should be given in the formulas below.
@@ -57,10 +57,10 @@ LongitSCparamTimeDep <- function(times = NULL, data, formula.NT, formula.T,
   YT <- model.response(model.frame(formula.T, data = data))
   ID <- data$ID
   TM <- data$TM
-  J <- length(unique(data$TM))
+  K <- length(unique(data$TM))
   if (is.null(times)) times <- sort(unique(data$TM))
   p <- pNT + pT + pOR
-  n.params <- 1 + 3*J + p 
+  n.params <- 1 + 3*K + p 
   if (is.null(init))
   {
     init <- rep(0.1,n.params)
@@ -101,30 +101,30 @@ LongitSCparamTimeDep <- function(times = NULL, data, formula.NT, formula.T,
     }
     fit$aic <- -2*fit$lik - 2*fit$df # lik is minus the log-likelihood without the peanlty
     fit$coef.longterm <-  fit$est[1]
-    fit$time.int.NT <- expit(fit$est[2:(1 + J)])
-    fit$time.int.T <- expit(fit$est[(1 + J + 1):(1 + 2*J)])
-    fit$time.int.OR <- exp(fit$est[(1 + 2*J + 1):(1 + 3*J)])
-    fit$coef.NT <- fit$est[(1 + 3*J + 1):(1 + 3*J + pNT)]
-    fit$coef.T <- fit$est[(1 + 3*J + pNT + 1):(1 + 3*J + pNT + pT)]
-    fit$coef.OR <- fit$est[(1 + 3*J + pNT + pT + 1):(1 + 3*J + pNT + pT + pOR)]
+    fit$time.int.NT <- expit(fit$est[2:(1 + K)])
+    fit$time.int.T <- expit(fit$est[(1 + K + 1):(1 + 2*K)])
+    fit$time.int.OR <- exp(fit$est[(1 + 2*K + 1):(1 + 3*K)])
+    fit$coef.NT <- fit$est[(1 + 3*K + 1):(1 + 3*K + pNT)]
+    fit$coef.T <- fit$est[(1 + 3*K + pNT + 1):(1 + 3*K + pNT + pT)]
+    fit$coef.OR <- fit$est[(1 + 3*K + pNT + pT + 1):(1 + 3*K + pNT + pT + pOR)]
     fit$se.longterm <- fit$se.rob[1]
-    fit$se.rob.NT <- fit$se.rob[(1 + 3*J + 1):(1 + 3*J + pNT)]
-    fit$se.rob.T <- fit$se.rob[(1 + 3*J + pNT + 1):(1 + 3*J + pNT + pT)]
-    fit$se.rob.OR <- fit$se.rob[(1 + 3*J + pNT + pT + 1):(1 + 3*J + pNT + pT + pOR)]
+    fit$se.rob.NT <- fit$se.rob[(1 + 3*K + 1):(1 + 3*K + pNT)]
+    fit$se.rob.T <- fit$se.rob[(1 + 3*K + pNT + 1):(1 + 3*K + pNT + pT)]
+    fit$se.rob.OR <- fit$se.rob[(1 + 3*K + pNT + pT + 1):(1 + 3*K + pNT + pT + pOR)]
   # calculate ci for the baseline prob.T1, prob.T2 and OR.
   # Using the appropoiate transformation of the CI for B%*%alpha
-  sub.vhat.NT <- fit$v.hat[2:(1 + J), 2:(1 + J)]
-  sub.vhat.T <- fit$v.hat[(1 + J + 1):(1 + 2*J), (1 + J + 1):(1 + 2*J)]
-  sub.vhat.OR <- fit$v.hat[(1 + 2*J + 1):(1 + 3*J), (1 + 2*J + 1):(1 + 3*J)]
-  fit$ci.L.alpha.NT <- expit(fit$est[2:(1 + J)] - qnorm(0.975)*sqrt(diag(sub.vhat.NT)))
-  fit$ci.H.alpha.NT <- expit(fit$est[2:(1 + J)] + qnorm(0.975)*sqrt(diag(sub.vhat.NT)))
-  fit$ci.L.alpha.T <- expit(fit$est[(1 + J + 1):(1 + 2*J)] - 
+  sub.vhat.NT <- fit$v.hat[2:(1 + K), 2:(1 + K)]
+  sub.vhat.T <- fit$v.hat[(1 + K + 1):(1 + 2*K), (1 + K + 1):(1 + 2*K)]
+  sub.vhat.OR <- fit$v.hat[(1 + 2*K + 1):(1 + 3*K), (1 + 2*K + 1):(1 + 3*K)]
+  fit$ci.L.alpha.NT <- expit(fit$est[2:(1 + K)] - qnorm(0.975)*sqrt(diag(sub.vhat.NT)))
+  fit$ci.H.alpha.NT <- expit(fit$est[2:(1 + K)] + qnorm(0.975)*sqrt(diag(sub.vhat.NT)))
+  fit$ci.L.alpha.T <- expit(fit$est[(1 + K + 1):(1 + 2*K)] - 
                               qnorm(0.975)*sqrt(diag(sub.vhat.T)))
-  fit$ci.H.alpha.T <- expit(fit$est[(1 + J + 1):(1 + 2*J)] +
+  fit$ci.H.alpha.T <- expit(fit$est[(1 + K + 1):(1 + 2*K)] +
                            qnorm(0.975)*sqrt(diag(sub.vhat.T)))
-  fit$ci.L.alpha.OR <- exp(fit$est[(1 + 2*J + 1):(1 + 3*J)] - 
+  fit$ci.L.alpha.OR <- exp(fit$est[(1 + 2*K + 1):(1 + 3*K)] - 
                           qnorm(0.975)*sqrt(diag(sub.vhat.OR)))
-  fit$ci.H.alpha.OR <- exp(fit$est[(1 + 2*J + 1):(1 + 3*J)] +
+  fit$ci.H.alpha.OR <- exp(fit$est[(1 + 2*K + 1):(1 + 3*K)] +
                           qnorm(0.975)*sqrt(diag(sub.vhat.OR)))
   if (pNT==1) {
     names(fit$coef.NT) <- names(fit$se.rob.NT) <- all.vars(formula.NT)} else {

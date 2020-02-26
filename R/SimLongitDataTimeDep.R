@@ -19,7 +19,7 @@
 #'  This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
 #'  track of the censoring rate when simulating data. 
 #'  @author Daniel Nevo
-#'   @export
+#' @export
 SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or,
                                  cens.poten.rate = 0) # cens.poten.rate is not really the censrate
 {

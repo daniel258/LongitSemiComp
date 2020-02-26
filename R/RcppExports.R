@@ -37,14 +37,6 @@ OddsRatioTime <- function(YNT, YT, riskNT, riskT) {
     .Call('_LongitSemiComp_OddsRatioTime', PACKAGE = 'LongitSemiComp', YNT, YT, riskNT, riskT)
 }
 
-ParamLogLik <- function(param, X, YNT, YT, riskNT, riskT, epsOR) {
-    .Call('_LongitSemiComp_ParamLogLik', PACKAGE = 'LongitSemiComp', param, X, YNT, YT, riskNT, riskT, epsOR)
-}
-
-ParamLogLikNoX <- function(param, YNT, YT, riskNT, riskT, epsOR) {
-    .Call('_LongitSemiComp_ParamLogLikNoX', PACKAGE = 'LongitSemiComp', param, YNT, YT, riskNT, riskT, epsOR)
-}
-
 ParamLogLikTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR) {
     .Call('_LongitSemiComp_ParamLogLikTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, epsOR)
 }
@@ -65,10 +57,6 @@ PenalLogLikORconst <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimeP
     .Call('_LongitSemiComp_PenalLogLikORconst', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
 }
 
-PenalLogLikORconstNOBetaOR <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
-    .Call('_LongitSemiComp_PenalLogLikORconstNOBetaOR', PACKAGE = 'LongitSemiComp', param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
-}
-
 PenalLogLikORconstNoX <- function(param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda) {
     .Call('_LongitSemiComp_PenalLogLikORconstNoX', PACKAGE = 'LongitSemiComp', param, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda)
 }
@@ -79,9 +67,5 @@ PenalLogLikORparam <- function(param, X, YNT, riskNT, riskT, YT, TimeBase, TimeP
 
 PenalLogLikTimeDep <- function(param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR) {
     .Call('_LongitSemiComp_PenalLogLikTimeDep', PACKAGE = 'LongitSemiComp', param, ID, TM, YT, YNT, XNT, XT, XOR, TimeBase, TimePen, lambda, epsOR)
-}
-
-PenalLogLikTimeDepOLD <- function(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, XNTtimeDep, XTtimeDep, XORtimeDep, TimeBase, TimePen, lambda, epsOR) {
-    .Call('_LongitSemiComp_PenalLogLikTimeDepOLD', PACKAGE = 'LongitSemiComp', param, YT, YNT, riskNT, riskT, XNT, XT, XOR, XNTtimeDep, XTtimeDep, XORtimeDep, TimeBase, TimePen, lambda, epsOR)
 }
 

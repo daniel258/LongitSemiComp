@@ -36,7 +36,6 @@ a binary time-dependent covariate simulated as described in Nevo et al (\code{X}
  This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
  track of the censoring rate when simulating data. 
  @author Daniel Nevo
-  @export
 }
 \description{
 Given observed non-terminal and terminal event times, censoring indicators and possible left-truncation, 

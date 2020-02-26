@@ -2,8 +2,8 @@
 % Please edit documentation in R/LongitSCparamTimeDep.R
 \name{LongitSCparamTimeDep}
 \alias{LongitSCparamTimeDep}
-\title{The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-dependening 
-covariates, and using unrestricted (per-interval parameter) time-varying functions.}
+\title{The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-depending 
+covariates and using unrestricted (per-interval parameter) time-varying functions.}
 \usage{
 LongitSCparamTimeDep(times = NULL, data, formula.NT, formula.T,
   formula.OR = NULL, epsOR = 10^(-10), init = NULL,
@@ -37,10 +37,10 @@ The function returns an object of class \code{LongitSC} including estimates and 
 the time-varying functions and coefficients.
 }
 \description{
-The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
-right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
-This could be done using \code{TimesToLongit}. This function uses B-splines representation the time-varying functions
-and implements penalized maximum likelihood to fit the model.
+The function implements the proposed methodology in Nevo et al. (2020+) for time-depending covariates under
+possible right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation,
+similiar to the counting-process representation. See details below. This function does not restrict the time-varying functions and estimates
+parameter for each interval. As a result, it contains more parameters and carry out parametric inference.
 }
 \details{
 For \code{data}, the represenation is similiar for the counting process represenation for survival data. 

@@ -1,8 +1,9 @@
-#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data using P-splines for the 
-#' time-varying functions.
-#' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
-#' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
-#' This could be done using \code{TimesToLongit}. This function uses B-splines representation the time-varying functions
+#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-depending
+#' covariates, and using P-splines for the time-varying functions.
+#' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-depending covariates under 
+#' possible right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation,
+#' similiar to the counting-process representation. See details below.
+#'  The \code{LongitSCtimeDep} function uses B-splines representation the time-varying functions
 #' and implements penalized maximum likelihood to fit the model.
 #' @param data A data.frame or a list with columns named \code{ID}, \code{TM}   \code{YNT}, \code{YT} as well as all covariate 
 #' names used in \code{formula.NT}, \code{formula.T} and \code{formula.OR}. See details below. Other names can be used for
@@ -63,7 +64,7 @@ LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T,
   TM <- data$TM
   if(length(lambda)==1) lambda <- rep(lambda, 3)
   if(length(lambda)!=3) stop("lambda should be of length 1 or 3")
-  J <- length(unique(data$TM))
+  K <- length(unique(data$TM))
   if (is.null(times)) times <- sort(unique(data$TM))
   smooth.aux <- mgcv::smooth.construct.ps.smooth.spec(mgcv::s(times,bs="ps", k = knots), data = list(times = times),
                                                       knots = list(times = c(min(times),max(times))))

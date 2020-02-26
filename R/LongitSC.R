@@ -1,26 +1,30 @@
-#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data using P-splines for the 
-#' time-varying functions.
+#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-fixed covariates
+#'  and using P-splines for the time-varying functions.
 #' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
-#' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
-#' This could be done using \code{TimesToLongit}. This function uses B-splines representation the time-varying functions
-#' and implements penalized maximum likelihood to fit the model.
-#' @param longit.data A data.frame or a list with columns named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. 
-#' The function \code{TimesToLongit} can be used to obtain this representation of semicompeting risks time-to-event data.
+#' right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
+#' This could be done using \code{\link{TimesToLongit}}. The \code{LongitSC} function uses B-splines representation the time-varying 
+#' functions and implements penalized maximum likelihood to fit the model.
+#' @param longit.data A a list with columns named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. See details below.
 #' @param times Vector of increasing times (for example, the interval partition points \eqn{\tau_1}... \eqn{\tau_K}).
 #' This vector is used to construct the B-splines
 #' @param formula.NT A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
-#' for the non terminal probability sub-model.
+#' the non-terminal event probability sub-model.
 #' @param formula.T A formula of the form \code{YT ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
-#' for the terminal probability sub-model.
+#' for the non-terminal event probability sub-model.
 #' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
 #' for the odds ratio sub-model.
 #' @param data A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.
 #' @param epsOR How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
-#' @param knots Number of knots for the B-splines.
+#' @param knots Number of knots for the B-splines (default is 5).
 #' @param lambda Penalization level. Either a vector of three values or a single number to be used for all three time-varying 
 #' functions.
 #' @param init Initial values for the parameters.
-#' @param maxit.optim For internal use of \code{optim}. Default is 50000
+#' @param maxit.optim For internal use of \code{optim}. Default is 50000.
+#' @details Each of the matrices in \code{longit.data},  \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT} have a row for each
+#' unit and a column for each interval. Then, \code{risk.NT} and \code{risk.T} indicate whether the unit is at risk in each interval
+#' for each of the events, respectively.  The matrices \code{YNT} and \code{YT} indicate whether the non-terminal and terminal
+#' event, respectively, were obsreved by the end of each interval.
+#'  The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data. 
 #' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
 #' the time-varying functions and coefficients.
 #' @note For time-varying covariates use \code{\link{LongitSCtimeDep}}. For unrestricted baseline functions 

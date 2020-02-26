@@ -188,39 +188,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ParamLogLik
-double ParamLogLik(arma::vec param, arma::mat X, arma::mat YNT, arma::mat YT, arma::mat riskNT, arma::mat riskT, double epsOR);
-RcppExport SEXP _LongitSemiComp_ParamLogLik(SEXP paramSEXP, SEXP XSEXP, SEXP YNTSEXP, SEXP YTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP epsORSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
-    Rcpp::traits::input_parameter< double >::type epsOR(epsORSEXP);
-    rcpp_result_gen = Rcpp::wrap(ParamLogLik(param, X, YNT, YT, riskNT, riskT, epsOR));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ParamLogLikNoX
-double ParamLogLikNoX(arma::vec param, arma::mat YNT, arma::mat YT, arma::mat riskNT, arma::mat riskT, double epsOR);
-RcppExport SEXP _LongitSemiComp_ParamLogLikNoX(SEXP paramSEXP, SEXP YNTSEXP, SEXP YTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP epsORSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
-    Rcpp::traits::input_parameter< double >::type epsOR(epsORSEXP);
-    rcpp_result_gen = Rcpp::wrap(ParamLogLikNoX(param, YNT, YT, riskNT, riskT, epsOR));
-    return rcpp_result_gen;
-END_RCPP
-}
 // ParamLogLikTimeDep
 double ParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM, arma::vec YT, arma::vec YNT, arma::mat XNT, arma::mat XT, arma::mat XOR, double epsOR);
 RcppExport SEXP _LongitSemiComp_ParamLogLikTimeDep(SEXP paramSEXP, SEXP IDSEXP, SEXP TMSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP epsORSEXP) {
@@ -321,25 +288,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// PenalLogLikORconstNOBetaOR
-double PenalLogLikORconstNOBetaOR(arma::vec param, arma::mat X, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda);
-RcppExport SEXP _LongitSemiComp_PenalLogLikORconstNOBetaOR(SEXP paramSEXP, SEXP XSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP YTSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type TimeBase(TimeBaseSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type TimePen(TimePenSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(PenalLogLikORconstNOBetaOR(param, X, YNT, riskNT, riskT, YT, TimeBase, TimePen, lambda));
-    return rcpp_result_gen;
-END_RCPP
-}
 // PenalLogLikORconstNoX
 double PenalLogLikORconstNoX(arma::vec param, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat YT, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda);
 RcppExport SEXP _LongitSemiComp_PenalLogLikORconstNoX(SEXP paramSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP YTSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP) {
@@ -400,31 +348,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// PenalLogLikTimeDepOLD
-double PenalLogLikTimeDepOLD(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat XNT, arma::mat XT, arma::mat XOR, arma::mat XNTtimeDep, arma::mat XTtimeDep, arma::mat XORtimeDep, arma::mat TimeBase, arma::mat TimePen, arma::vec lambda, double epsOR);
-RcppExport SEXP _LongitSemiComp_PenalLogLikTimeDepOLD(SEXP paramSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP XNTtimeDepSEXP, SEXP XTtimeDepSEXP, SEXP XORtimeDepSEXP, SEXP TimeBaseSEXP, SEXP TimePenSEXP, SEXP lambdaSEXP, SEXP epsORSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XNT(XNTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XT(XTSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XOR(XORSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XNTtimeDep(XNTtimeDepSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XTtimeDep(XTtimeDepSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type XORtimeDep(XORtimeDepSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type TimeBase(TimeBaseSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type TimePen(TimePenSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< double >::type epsOR(epsORSEXP);
-    rcpp_result_gen = Rcpp::wrap(PenalLogLikTimeDepOLD(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, XNTtimeDep, XTtimeDep, XORtimeDep, TimeBase, TimePen, lambda, epsOR));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_LongitSemiComp_GradParamLogLikPersTimeDep", (DL_FUNC) &_LongitSemiComp_GradParamLogLikPersTimeDep, 9},
@@ -436,18 +359,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_LongitSemiComp_GradPenalLogLikPersTimeDep", (DL_FUNC) &_LongitSemiComp_GradPenalLogLikPersTimeDep, 12},
     {"_LongitSemiComp_GradPenalLogLikTimeDep", (DL_FUNC) &_LongitSemiComp_GradPenalLogLikTimeDep, 12},
     {"_LongitSemiComp_OddsRatioTime", (DL_FUNC) &_LongitSemiComp_OddsRatioTime, 4},
-    {"_LongitSemiComp_ParamLogLik", (DL_FUNC) &_LongitSemiComp_ParamLogLik, 7},
-    {"_LongitSemiComp_ParamLogLikNoX", (DL_FUNC) &_LongitSemiComp_ParamLogLikNoX, 6},
     {"_LongitSemiComp_ParamLogLikTimeDep", (DL_FUNC) &_LongitSemiComp_ParamLogLikTimeDep, 9},
     {"_LongitSemiComp_PenalLogLik", (DL_FUNC) &_LongitSemiComp_PenalLogLik, 12},
     {"_LongitSemiComp_PenalLogLikNoX", (DL_FUNC) &_LongitSemiComp_PenalLogLikNoX, 9},
     {"_LongitSemiComp_PenalLogLikNullModelOR", (DL_FUNC) &_LongitSemiComp_PenalLogLikNullModelOR, 11},
     {"_LongitSemiComp_PenalLogLikORconst", (DL_FUNC) &_LongitSemiComp_PenalLogLikORconst, 9},
-    {"_LongitSemiComp_PenalLogLikORconstNOBetaOR", (DL_FUNC) &_LongitSemiComp_PenalLogLikORconstNOBetaOR, 9},
     {"_LongitSemiComp_PenalLogLikORconstNoX", (DL_FUNC) &_LongitSemiComp_PenalLogLikORconstNoX, 8},
     {"_LongitSemiComp_PenalLogLikORparam", (DL_FUNC) &_LongitSemiComp_PenalLogLikORparam, 10},
     {"_LongitSemiComp_PenalLogLikTimeDep", (DL_FUNC) &_LongitSemiComp_PenalLogLikTimeDep, 12},
-    {"_LongitSemiComp_PenalLogLikTimeDepOLD", (DL_FUNC) &_LongitSemiComp_PenalLogLikTimeDepOLD, 15},
     {NULL, NULL, 0}
 };
 
