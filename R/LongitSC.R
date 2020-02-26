@@ -1,26 +1,30 @@
-#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data
-#' @description The function implments the proposed methodlogy in Nevo et al. (2020+) for time-fixed covaraites under possible 
-#' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary represenation. 
-#' This could be done using \code{TimesToLongit}.
+#' @title The function to fit a longitudinal bivariate binary model for semi-competing risks data using P-splines for the 
+#' time-varying functions.
+#' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-fixed covariates under possible 
+#' right-censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
+#' This could be done using \code{TimesToLongit}. This function uses B-splines representation the time-varying functions
+#' and implements penalized maximum likelihood to fit the model.
 #' @param longit.data A data.frame or a list with columns named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. 
 #' The function \code{TimesToLongit} can be used to obtain this representation of semicompeting risks time-to-event data.
-#' @param times Vector of increasing times
+#' @param times Vector of increasing times (for example, the interval partition points \eqn{\tau_1}... \eqn{\tau_K}).
+#' This vector is used to construct the B-splines
 #' @param formula.NT A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
-#' for the non terminal probaility sub-model.
+#' for the non terminal probability sub-model.
 #' @param formula.T A formula of the form \code{YT ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
-#' for the terminal probaility sub-model.
+#' for the terminal probability sub-model.
 #' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
 #' for the odds ratio sub-model.
-#' @param data A data.frame with the covariates specfied in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.
+#' @param data A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.
 #' @param epsOr How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
 #' @param knots Number of knots for the Bsplines
-#' @param lambda Amount of penalization. Either a vecotr of three values or a single number to use for all three functions
-#' @param init Initial values for the parameters
-#' @param maxit.optim For iternal use of \code{optim}. Default is 5000
+#' @param lambda Penalization level. Either a vector of three values or a single number to be used for all three time-varying 
+#' functions.
+#' @param init Initial values for the parameters.
+#' @param maxit.optim For internal use of \code{optim}. Default is 50000
 #' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
 #' the time-varying functions and coefficients.
-#' @note For time-varying covariates use \code{LongitSCtimeDep}. For unrestricted baseline functions 
-#' (no Bsplines or penalization) use \code{LongitSCparamTimeDep}
+#' @note For time-varying covariates use \code{\link{LongitSCtimeDep}}. For unrestricted baseline functions 
+#' (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
 #'  @author Daniel Nevo
 #' @export
 LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, 
