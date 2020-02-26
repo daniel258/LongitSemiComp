@@ -1,6 +1,6 @@
 Package: LongitSemiComp
 Title: BIVARIATE LONGITUDINAL ANALYSIS of SEMI COMPETING RISKS DATA
-Version: 0.1.0.9003
+Version: 0.1.0.9004
 Authors@R: person("Daniel", "Nevo", email = "danielnevo@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: MASS, R (>= 3.4.0)

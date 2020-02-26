@@ -61,10 +61,10 @@ simData <- SemiCompRisks::simID(id, x1, x2, x3, beta1.true, beta2.true, beta3.tr
                                 kappa1.true, kappa2.true, kappa3.true, 
                                 theta.true, SigmaV.true, cens)	
 plot(simData$y1, y = simData$y2)
-Longit.data <- TimesToLongit(T1 = simData$y1, T2 = simData$y2, delta1 = simData$delta1, 
+longit.data <- TimesToLongit(T1 = simData$y1, T2 = simData$y2, delta1 = simData$delta1, 
                              delta2 = simData$delta2, inter.vec = seq(0, 90, 10))
-Longit.data$YNT[1:3,]
-Longit.data$YT[1:3,]
-Longit.data$risk.NT[1:3,]
-Longit.data$risk.T[1:3,]
+longit.data$YNT[1:3,]
+longit.data$YT[1:3,]
+longit.data$risk.NT[1:3,]
+longit.data$risk.T[1:3,]
 }

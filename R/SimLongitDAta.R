@@ -18,6 +18,28 @@
 #' @return A list with the covariates used (\code{X}), at-risk indicators for each unit at each interval
 #'  (\code{risk.NT} and \code{risk.T}) and outcome data
 #'  at each interval (\code{YNT} and \code{YT}).
+#' @examples
+#' # Simulate semicompeting risks data
+#' set.seed(314)
+#' times <- seq(1,15,1)
+#' alpha.nt <- LongitSemiComp:::logit(dchisq(times,3, ncp =5)/2 + 0.025)
+#' alpha.t <- LongitSemiComp:::logit(times*(0.075/10)  - 0.0005*(times/20)^2  + 0.05)
+#' alpha.or <- 0.15 - times/10 + 0.75*(times/10)^2 + 0.3*(times/20)^3
+#' plot(x = times, y= exp(alpha.or))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.nt))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.t))
+#' beta.nt <- log(c(0.7, 3))
+#' beta.t <- log(c(0.5, 1))
+#' beta.or <- log(c(1, 1))
+#' beta.y <- log(1.4)
+#'   my.data <- SimLongitDataSmooth(n.sample = 200, times = times,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
+#'    longit.data <- my.data[-1]
+#'    X <- my.data[1]
+# \dontrun{
+# if(interactive()){
+#  #EXAMPLE1
+#  }
+# }
 #'  @author Daniel Nevo
 #' @export
 SimLongitData <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or, X = NULL)

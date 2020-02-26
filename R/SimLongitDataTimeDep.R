@@ -18,6 +18,24 @@
 #'  is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
 #'  This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
 #'  track of the censoring rate when simulating data. 
+#'  @examples
+#'  set.seed(1611)
+#'  times <- seq(1,14,1)
+#'  alpha.nt <- LongitSemiComp:::logit(times*0.005  + 0.005*(times-2)^2 - (0.0002*(times + 1)^3) + 0.005)
+#'  alpha.t <- LongitSemiComp:::logit(times*0.0075  + 0.001*(times^2)  + 0.03)
+#'  alpha.or <- 0.9 + 0.175*times - 0.02*times^2 #+ 0.3*(times/20)^3
+#'  alpha.or[times >= 13] <- 0
+#' plot(x = times, y= exp(alpha.or))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.nt))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.t))
+#' beta.nt <- log(c(0.7, 3))
+#' beta.t <- log(c(0.5, 1))
+#' beta.or <- log(c(1, 1))
+#' beta.y <- log(1.4)
+#'  my.data <- SimLongitDataTimeDep(n.sample, times = times,  beta.y,  alpha.nt, alpha.t, alpha.or, 
+#'                                  beta.nt, beta.t, beta.or, cens.poten.rate = 0.5)
+#'  df.data <- my.data$df.return
+#'  mean(my.data$cens)
 #'  @author Daniel Nevo
 #' @export
 SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or,
@@ -30,7 +48,7 @@ SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, al
   p <- length(beta.nt)
   X.time.fixed <- as.matrix(rnorm(n.sample))
   X.time.dep <- matrix(nrow = n.sample, ncol = J, 0) 
-  X.time.dep[, 1] <- rbinom(n.sample, 1, 0.6)  # At baseline 0.6 are married
+  X.time.dep[, 1] <- rbinom(n.sample, 1, 0.6)  # At baseline Pr(X(t)=1)=0.6
   risk.NT <- risk.T <- YNT <- YT <- matrix(nrow = n.sample, ncol = J, 0)
   risk.NT[,1] <- 1
   risk.T[,1] <- 1
