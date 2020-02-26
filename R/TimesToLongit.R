@@ -56,6 +56,7 @@
 # I want the following two lines in the namespace, can be moved to other files if this script is deleted
 #'@useDynLib LongitSemiComp 
 #'@importFrom Rcpp evalCpp 
+#'@import MASS stats
 #' @export
 TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, TruncTime = NULL) # TruncTime is the time of entry to the study
 {
