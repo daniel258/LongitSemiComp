@@ -1,6 +1,27 @@
-#' @export
-LongitSCparamTimeDep <- function(times = NULL,  formula.NT, formula.T, 
-                            formula.OR = NULL, data, epsOR = 10^(-10),
+#' @title The function that simulates data form longitudinal bivariate binary semicompeting risks data with time-varying covarites
+#' and unrestricted (per-interval parametr) time-varying functions.
+#' @description Given observed non-terminal and terminal event times, and time-depending covaraites, this function implments
+#' theta proposed longitudinal bivariate binary representation according to given interval partition  in Nevo et al.
+#' @param n.sample Desired sample size.
+#' @param times A vector of increasing times. Normally of equal length
+#' @param alpha.nt True value for \eqn{\alpha_1(t)} for each \eqn{t} in \code{times}.
+#' @param alpha.t True value for \eqn{\alpha_2(t)} for each \eqn{t} in \code{times}.
+#' @param alpha.or True value for \eqn{\alpha_\theta(t)} for each \eqn{t} in \code{times}.
+#' @param beta.nt True value for \eqn{\beta_1}. 
+#' @param beta.t True value for \eqn{\beta_2}.
+#' @param beta.or True value for \eqn{\beta_\theta}.
+#' @param beta.y True value for \eqn{\beta_y}.
+#' @param cens.poten.rate Potential cenosoring rate. At each time interval the probability of each alive observation to be censored
+#' @return A list with two objects: \code{df.return} returns the data in a way similiat to counting process presentation, 
+#' each unique \code{ID} has multiple rows, one for each interval. A time-fixed normally distributed random variable and 
+#' a binary time-dependent covariate simulated as described in Nevo et al (\code{X}). The outcome data at each interval
+#'  is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
+#'  This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
+#'  track of the censoring rate when simulating data. 
+#'  @author Daniel Nevo
+#'   @export
+LongitSCparamTimeDep <- function(times = NULL, data, formula.NT, formula.T, 
+                            formula.OR = NULL,  epsOR = 10^(-10),
                              init = NULL, maxit.optim = 50000)
 {
   if (!is.null(formula.NT)) {
