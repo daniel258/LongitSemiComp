@@ -7,15 +7,17 @@
 #' @param alpha.nt True value for \eqn{\alpha_1(t)} for each \eqn{t} in \code{times}.
 #' @param alpha.t True value for \eqn{\alpha_2(t)} for each \eqn{t} in \code{times}.
 #' @param alpha.or True value for \eqn{\alpha_\theta(t)} for each \eqn{t} in \code{times}.
-#' @param beta.nt True value for \eqn{\beta_1} 
-#' @param beta.t True value for \eqn{\beta_2} 
-#' @param beta.or True value for \eqn{\beta_\theta}
-#' @param beta.y True value for \eqn{\beta_y}
+#' @param beta.nt True value for \eqn{\beta_1}. 
+#' @param beta.t True value for \eqn{\beta_2}.
+#' @param beta.or True value for \eqn{\beta_\theta}.
+#' @param beta.y True value for \eqn{\beta_y}.
 #' @param cens.poten.rate Potential cenosoring rate. At each time interval the probability of each alive observation to be censored
 #' @return A list with two objects: \code{df.return} returns the data in a way similiat to counting process presentation, 
 #' each unique \code{ID} has multiple rows, one for each interval. A time-fixed normally distributed random variable and 
 #' a binary time-dependent covariate simulated as described in Nevo et al (\code{X}). The outcome data at each interval
-#'  is given by \code{YNT} and \code{YT}.
+#'  is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
+#'  This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
+#'  track of the censoring rate when simulating data. 
 #'  @author Daniel Nevo
 #'   @export
 SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or,
@@ -36,7 +38,7 @@ SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, al
   p.nt.first <- expit(alpha.nt[1] + Xfirst%*%beta.nt)
   p.t.first <- expit(alpha.t[1] + Xfirst%*%beta.t)
   OR.first <- exp(alpha.or[1]+ Xfirst%*%beta.or)
-  first.probs <- LongitSemiComp::MargORtoJoint(p1marg = p.nt.first, p2marg = p.t.first, OR = OR.first)
+  first.probs <- MargORtoJoint(p1marg = p.nt.first, p2marg = p.t.first, OR = OR.first)
   crude.data <- apply(X = first.probs, MARGIN = 1, FUN = sample, x = 1:4, size = 1, replace = T)
   YNT[,1] <- crude.data %in% c(2,4)
   YT[,1] <- crude.data %in% c(3,4)
@@ -64,7 +66,7 @@ SimLongitDataTimeDep <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, al
       p.nt.both <- expit(alpha.nt[j] + Xtemp[at.risk.both, ]%*%beta.nt)
       p.t.both <- expit(alpha.t[j] + Xtemp[at.risk.both, ]%*%beta.t)
       OR.both <- exp(alpha.or[j]+ Xtemp[at.risk.both, ]%*%beta.or)
-      probs.both <- LongitSemiComp::MargORtoJoint(p1marg = p.nt.both, p2marg = p.t.both, OR = OR.both)
+      probs.both <- MargORtoJoint(p1marg = p.nt.both, p2marg = p.t.both, OR = OR.both)
       crude.data.both <- apply(X = probs.both, MARGIN = 1, FUN = sample, x = 1:4, size = 1, replace = T)
       YNT[at.risk.both, j] <- crude.data.both %in% c(2, 4)
       YT[at.risk.both, j] <- crude.data.both %in% c(3, 4)
