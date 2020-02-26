@@ -27,7 +27,7 @@
 #' @note  For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
 #' For time-fixed covariates use \code{\link{LongitSCtimeDep}}.
 #'  @author Daniel Nevo
-#'   @export
+#' @export
 LongitSCparamTimeDep <- function(times = NULL, data, formula.NT, formula.T, 
                             formula.OR = NULL,  epsOR = 10^(-10),
                              init = NULL, maxit.optim = 50000)
