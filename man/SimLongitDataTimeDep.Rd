@@ -12,7 +12,7 @@ SimLongitDataTimeDep(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
 
 \item{times}{A vector of increasing times. Normally of equal length}
 
-\item{beta.y}{True value for \eqn{\beta_y}}
+\item{beta.y}{True value for \eqn{\beta_y}.}
 
 \item{alpha.nt}{True value for \eqn{\alpha_1(t)} for each \eqn{t} in \code{times}.}
 
@@ -20,11 +20,11 @@ SimLongitDataTimeDep(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
 
 \item{alpha.or}{True value for \eqn{\alpha_\theta(t)} for each \eqn{t} in \code{times}.}
 
-\item{beta.nt}{True value for \eqn{\beta_1}}
+\item{beta.nt}{True value for \eqn{\beta_1}.}
 
-\item{beta.t}{True value for \eqn{\beta_2}}
+\item{beta.t}{True value for \eqn{\beta_2}.}
 
-\item{beta.or}{True value for \eqn{\beta_\theta}}
+\item{beta.or}{True value for \eqn{\beta_\theta}.}
 
 \item{cens.poten.rate}{Potential cenosoring rate. At each time interval the probability of each alive observation to be censored}
 }
@@ -32,7 +32,9 @@ SimLongitDataTimeDep(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
 A list with two objects: \code{df.return} returns the data in a way similiat to counting process presentation, 
 each unique \code{ID} has multiple rows, one for each interval. A time-fixed normally distributed random variable and 
 a binary time-dependent covariate simulated as described in Nevo et al (\code{X}). The outcome data at each interval
- is given by \code{YNT} and \code{YT}.
+ is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
+ This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
+ track of the censoring rate when simulating data. 
  @author Daniel Nevo
   @export
 }
