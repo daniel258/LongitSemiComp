@@ -3,7 +3,7 @@
 S3method(coef,LongitSC)
 S3method(print,LongitSC)
 export(LongitSC)
-export(LongitSCparamTimeDep)
+export(LongitSCparam)
 export(LongitSCtimeDep)
 export(SimLongitData)
 export(TimesToLongit)
