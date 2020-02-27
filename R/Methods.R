@@ -60,6 +60,6 @@
    coef.NT <- object$coef.NT
    coef.T <- object$coef.T
    coef.OR <- object$coef.OR
-   coef.longterm <-objectx$coef.longterm
+   coef.longterm <- object$coef.longterm
   return(list(coef.NT = coef.NT, coef.T = coef.T, coef.OR = coef.OR, coef.longterm = coef.longterm))
  }
