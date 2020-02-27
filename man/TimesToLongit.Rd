@@ -32,6 +32,7 @@ this function returns the outcome data in the longitudinal bivariate binary repr
  as proposed in Nevo et al.
 }
 \examples{
+\dontrun{
 # Simulate semicompeting risks data
 library(MASS)
 set.seed(123456)
@@ -67,4 +68,5 @@ longit.data$YNT[1:3,]
 longit.data$YT[1:3,]
 longit.data$risk.NT[1:3,]
 longit.data$risk.T[1:3,]
+}
 }

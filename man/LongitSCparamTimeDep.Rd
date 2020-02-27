@@ -49,8 +49,35 @@ For \code{data}, the represenation is similiar for the counting process represen
 See examples in  \code{\link{SimLongitDataTimeDep}}
 }
 \note{
-For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
+For B-splines model for the time-varying function with penalized maximum likelihood use \code{\link{LongitSCtimeDep}}.
 For time-fixed covariates use \code{\link{LongitSCtimeDep}}.
+#' @examples
+\dontrun{
+# Simulate semicompeting risks data
+set.seed(314)
+times <- seq(1,15,1)
+alpha.nt <- LongitSemiComp:::logit(dchisq(times,3, ncp =5)/2 + 0.025)
+alpha.t <- LongitSemiComp:::logit(times*(0.075/10)  - 0.0005*(times/20)^2  + 0.05)
+alpha.or <- 0.15 - times/10 + 0.75*(times/10)^2 + 0.3*(times/20)^3
+plot(x = times, y= exp(alpha.or))
+plot(x = times, y= LongitSemiComp:::expit(alpha.nt))
+plot(x = times, y= LongitSemiComp:::expit(alpha.t))
+beta.nt <- log(c(0.7, 3))
+beta.t <- log(c(0.5, 1))
+beta.or <- log(c(1.4, 1))
+beta.y <- log(1.4)
+sim.data <- SimLongitDataTimeDep(n.sample = 1500, times = times,  beta.y,  cens.poten.rate = 0.5,
+                                 alpha.nt, alpha.t, alpha.or, 
+                                 beta.nt, beta.t, beta.or)
+# Censoring rate
+mean(sim.data$cens)
+my.df <- sim.data$df.return
+# Analysis
+res <- LongitSCparamTimeDep(data = my.df, times = times,  formula.NT = YNT ~ X.1 + X.2, 
+                            formula.T = YT  ~ X.1 + X.2, 
+                            formula.OR = ~ X.1 + X.2)
+ res
+}
 }
 \author{
 Daniel Nevo

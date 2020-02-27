@@ -15,10 +15,10 @@ LongitSC(longit.data, times = NULL, formula.NT, formula.T,
 \item{times}{Vector of increasing times (for example, the interval partition points \eqn{\tau_1}... \eqn{\tau_K}).
 This vector is used to construct the B-splines}
 
-\item{formula.NT}{A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
+\item{formula.NT}{A formula of the form \code{ ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
 the non-terminal event probability sub-model.}
 
-\item{formula.T}{A formula of the form \code{YT ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
+\item{formula.T}{A formula of the form \code{ ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
 for the non-terminal event probability sub-model.}
 
 \item{formula.OR}{A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
@@ -55,8 +55,33 @@ event, respectively, were obsreved by the end of each interval.
 The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data.
 }
 \note{
-For time-varying covariates use \code{\link{LongitSCtimeDep}}. For unrestricted baseline functions 
-(no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
+For time-varying covariates use \code{\link{LongitSCtimeDep}} or \code{\link{LongitSCparamTimeDep}}.
+}
+\examples{
+\dontrun{
+set.seed(314)
+times <- seq(1, 15, 1)
+alpha.nt <- LongitSemiComp:::logit(dchisq(times,3, ncp =5)/2 + 0.025)
+alpha.t <- LongitSemiComp:::logit(times*(0.075/10)  - 0.0005*(times/20)^2  + 0.05)
+alpha.or <- 0.15 - times/10 + 0.75*(times/10)^2 + 0.3*(times/20)^3
+plot(x = times, y= exp(alpha.or))
+plot(x = times, y= LongitSemiComp:::expit(alpha.nt))
+plot(x = times, y= LongitSemiComp:::expit(alpha.t))
+beta.nt <- log(c(0.7, 3))
+beta.t <- log(c(0.5, 1))
+beta.or <- log(c(1.4, 1))
+beta.y <- log(1.4)
+my.data <- SimLongitData(n.sample = 2000, times = times,  beta.y,  
+                         alpha.nt, alpha.t, alpha.or, 
+                         beta.nt, beta.t, beta.or)
+longit.data <- my.data[-1]
+X <- as.data.frame(my.data[1])
+LongitSC(longit.data = longit.data, times = times,  formula.NT =  ~ X.1 + X.2, 
+         formula.T =  ~ X.1 + X.2, 
+         formula.OR = ~ X.1 + X.2, 
+         data = X, epsOR = 10^(-10),
+         knots = 5, lambda = 1)
+}
 }
 \author{
 Daniel Nevo

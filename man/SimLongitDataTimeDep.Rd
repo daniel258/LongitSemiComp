@@ -34,14 +34,22 @@ each unique \code{ID} has multiple rows, one for each interval. A time-fixed nor
 a binary time-dependent covariate simulated as described in Nevo et al (\code{X}). The outcome data at each interval
  is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
  This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
- track of the censoring rate when simulating data. 
- @examples
- set.seed(1611)
- times <- seq(1,14,1)
- alpha.nt <- LongitSemiComp:::logit(times*0.005  + 0.005*(times-2)^2 - (0.0002*(times + 1)^3) + 0.005)
- alpha.t <- LongitSemiComp:::logit(times*0.0075  + 0.001*(times^2)  + 0.03)
- alpha.or <- 0.9 + 0.175*times - 0.02*times^2 #+ 0.3*(times/20)^3
- alpha.or[times >= 13] <- 0
+ track of the censoring rate when simulating data.
+}
+\description{
+Given observed non-terminal and terminal event times, censoring indicators and possible left-truncation, 
+this function returns the outcome data in the longitudinal bivariate binary representation according to given interval partition
+ as proposed in Nevo et al.
+}
+\examples{
+\dontrun{
+set.seed(314)
+times <- seq(1,14,1)
+alpha.nt <- LongitSemiComp:::logit(times*0.005  + 0.005*(times-2)^2 - 
+                                   (0.0002*(times + 1)^3) + 0.005)
+alpha.t <- LongitSemiComp:::logit(times*0.0075  + 0.001*(times^2)  + 0.03)
+alpha.or <- 0.9 + 0.175*times - 0.02*times^2 #+ 0.3*(times/20)^3
+alpha.or[times >= 13] <- 0
 plot(x = times, y= exp(alpha.or))
 plot(x = times, y= LongitSemiComp:::expit(alpha.nt))
 plot(x = times, y= LongitSemiComp:::expit(alpha.t))
@@ -49,14 +57,14 @@ beta.nt <- log(c(0.7, 3))
 beta.t <- log(c(0.5, 1))
 beta.or <- log(c(1, 1))
 beta.y <- log(1.4)
- my.data <- SimLongitDataTimeDep(n.sample, times = times,  beta.y,  alpha.nt, alpha.t, alpha.or, 
-                                 beta.nt, beta.t, beta.or, cens.poten.rate = 0.5)
- df.data <- my.data$df.return
- mean(my.data$cens)
- @author Daniel Nevo
+my.data <- SimLongitDataTimeDep(n.sample = 2000, times = times,  beta.y,  
+                                alpha.nt, alpha.t, alpha.or, 
+                                beta.nt, beta.t, beta.or, cens.poten.rate = 0.5)
+df.data <- my.data$df.return
+mean(my.data$cens)
 }
-\description{
-Given observed non-terminal and terminal event times, censoring indicators and possible left-truncation, 
-this function returns the outcome data in the longitudinal bivariate binary representation according to given interval partition
- as proposed in Nevo et al.
+
+}
+\author{
+Daniel Nevo
 }

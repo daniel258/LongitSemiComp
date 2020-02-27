@@ -2,10 +2,10 @@
 #' covariates, and using P-splines for the time-varying functions.
 #' @description The function implements the proposed methodology in Nevo et al. (2020+) for time-depending covariates under 
 #' possible right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation,
-#' similiar to the counting-process representation. See details below.
+#' similar to the counting-process representation. See details below.
 #' The \code{LongitSCtimeDep} function uses B-splines representation the time-varying functions
 #' and implements penalized maximum likelihood to fit the model.
-#' @param data A data.frame or a list with columns named \code{ID}, \code{TM}   \code{YNT}, \code{YT} as well as all covariate 
+#' @param data A data.frame or a list with columns named \code{ID}, \code{TM},   \code{YNT}, \code{YT} as well as all covariate 
 #' names used in \code{formula.NT}, \code{formula.T} and \code{formula.OR}. See details below. Other names can be used for
 #' \code{YNT}, \code{YT}, but then their names should be given in the formulas below.
 #' @param times Vector of increasing times (for example, the interval partition points \eqn{\tau_1,}..., \eqn{\tau_K}).
@@ -22,14 +22,44 @@
 #' functions.
 #' @param init Initial values for the parameters.
 #' @param maxit.optim For internal use of \code{optim}. Default is 50000
-#' @details For \code{data}, the represenation is similiar for the counting process represenation for survival data. 
-#' \code{ID} identify each person, where \code{TM} identifes the intervals in which this person is under followup.
-#' \code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
-#'  See examples in  \code{\link{SimLongitDataTimeDep}} 
+#' @details For \code{data}, the representation is similar to the counting process representation of time-to-event data.  
+#' \code{ID} identify each person, where \code{TM} identifies the intervals in which this person is under followup.
+#' \code{YNT} and \code{YT} indicate whether a non-terminal event and the terminal event occurred by the end of interval \code{TM}.
+#' See examples in  \code{\link{SimLongitDataTimeDep}}.
 #' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
 #' the time-varying functions and coefficients.
 #' @note  For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
 #' For time-fixed covariates use \code{\link{LongitSCtimeDep}}.
+#' 
+#' @examples
+#' \dontrun{
+#' # Simulate semicompeting risks data
+#' set.seed(314)
+#' times <- seq(1,15,1)
+#' alpha.nt <- LongitSemiComp:::logit(dchisq(times,3, ncp =5)/2 + 0.025)
+#' alpha.t <- LongitSemiComp:::logit(times*(0.075/10)  - 0.0005*(times/20)^2  + 0.05)
+#' alpha.or <- 0.15 - times/10 + 0.75*(times/10)^2 + 0.3*(times/20)^3
+#' plot(x = times, y= exp(alpha.or))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.nt))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.t))
+#' beta.nt <- log(c(0.7, 3))
+#' beta.t <- log(c(0.5, 1))
+#' beta.or <- log(c(1.4, 1))
+#' beta.y <- log(1.4)
+#' sim.data <- SimLongitDataTimeDep(n.sample = 1500, times = times,  beta.y,  cens.poten.rate = 0.5,
+#'                                  alpha.nt, alpha.t, alpha.or, 
+#'                                  beta.nt, beta.t, beta.or)
+#' # Censoring rate
+#' mean(sim.data$cens)
+#' my.df <- sim.data$df.return
+#' # Analysis
+#' res <- LongitSCtimeDep(data = my.df, times = times,  formula.NT = YNT ~ X.1 + X.2, 
+#'                        formula.T = YT  ~ X.1 + X.2, 
+#'                        formula.OR = ~ X.1 + X.2, 
+#'                        knots = 5, lambda = 1)
+#'  res
+#' }
+#'
 #' @author Daniel Nevo
 #' @export
 LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T, 

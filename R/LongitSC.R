@@ -4,12 +4,12 @@
 #' right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation. 
 #' This could be done using \code{\link{TimesToLongit}}. The \code{LongitSC} function uses B-splines representation the time-varying 
 #' functions and implements penalized maximum likelihood to fit the model.
-#' @param longit.data A a list with columns named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. See details below.
-#' @param times Vector of increasing times (for example, the interval partition points \eqn{\tau_1}... \eqn{\tau_K}).
+#' @param longit.data A list with entries named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. See details below.
+#' @param times A vector of increasing times (for example, the interval partition points \eqn{\tau_1}... \eqn{\tau_K}).
 #' This vector is used to construct the B-splines
-#' @param formula.NT A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
+#' @param formula.NT A formula of the form \code{ ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
 #' the non-terminal event probability sub-model.
-#' @param formula.T A formula of the form \code{YT ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
+#' @param formula.T A formula of the form \code{ ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
 #' for the non-terminal event probability sub-model.
 #' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
 #' for the odds ratio sub-model.
@@ -23,12 +23,36 @@
 #' @details Each of the matrices in \code{longit.data},  \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT} have a row for each
 #' unit and a column for each interval. Then, \code{risk.NT} and \code{risk.T} indicate whether the unit is at risk in each interval
 #' for each of the events, respectively.  The matrices \code{YNT} and \code{YT} indicate whether the non-terminal and terminal
-#' event, respectively, were obsreved by the end of each interval.
+#' event, respectively, were observed by the end of each interval.
 #' The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data. 
 #' @return The function returns an object of class \code{LongitSC} including estimates and confidence intervals for 
 #' the time-varying functions and coefficients.
-#' @note For time-varying covariates use \code{\link{LongitSCtimeDep}}. For unrestricted baseline functions 
-#' (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.
+#' @note For time-varying covariates use \code{\link{LongitSCtimeDep}} or \code{\link{LongitSCparamTimeDep}}.
+#' @examples 
+#' \dontrun{
+#' set.seed(314)
+#' times <- seq(1, 15, 1)
+#' alpha.nt <- LongitSemiComp:::logit(dchisq(times,3, ncp =5)/2 + 0.025)
+#' alpha.t <- LongitSemiComp:::logit(times*(0.075/10)  - 0.0005*(times/20)^2  + 0.05)
+#' alpha.or <- 0.15 - times/10 + 0.75*(times/10)^2 + 0.3*(times/20)^3
+#' plot(x = times, y= exp(alpha.or))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.nt))
+#' plot(x = times, y= LongitSemiComp:::expit(alpha.t))
+#' beta.nt <- log(c(0.7, 3))
+#' beta.t <- log(c(0.5, 1))
+#' beta.or <- log(c(1.4, 1))
+#' beta.y <- log(1.4)
+#' my.data <- SimLongitData(n.sample = 2000, times = times,  beta.y,  
+#'                          alpha.nt, alpha.t, alpha.or, 
+#'                          beta.nt, beta.t, beta.or)
+#' longit.data <- my.data[-1]
+#' X <- as.data.frame(my.data[1])
+#' LongitSC(longit.data = longit.data, times = times,  formula.NT =  ~ X.1 + X.2, 
+#'          formula.T =  ~ X.1 + X.2, 
+#'          formula.OR = ~ X.1 + X.2, 
+#'          data = X, epsOR = 10^(-10),
+#'          knots = 5, lambda = 1)
+#' }
 #' @author Daniel Nevo
 #' @export
 LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, data,
@@ -70,7 +94,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
   n.params <- 1 + 3*Q + p
   if (is.null(init))
   {
-    init <- rep(0,n.params)
+    init <- rep(-0.1,n.params)
   }
   if (pOR==0) {
     res.opt <- optim(par = init, fn = PenalLogLikNullModelOR, gr = GradPenalLogLikNullModelOR, hessian = T,
@@ -88,7 +112,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$optim.conv <- res.opt$convergence
     fit$est <- res.opt$par
     fit$penal.lik <- -res.opt$value 
-    fit$lik <- PenalLogLikNullModelOR(param = fit$est, epsOR = epsOR, XNT = XNTmat, XT = XTmat, #XOR = XORmat,
+    fit$lik <- PenalLogLikNullModelOR(param = fit$est, epsOR = epsOR, XNT = XNTmat, XT = XTmat, 
                            YNT = longit.data$YNT, YT = longit.data$YT, 
                            riskNT = longit.data$risk.NT, riskT = longit.data$risk.T,
                            TimeBase = Bsplines,
@@ -182,7 +206,7 @@ LongitSC <- function(longit.data, times = NULL, formula.NT, formula.T, formula.O
     fit$se.rob.OR <- fit$se.rob[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
   }
   # calculate ci for the baseline prob.T1, prob.T2 and OR.
-  # Using the appropoiate transformation of the CI for B%*%alpha
+  # Using the appropriate transformation of the CI for B%*%eta
   sub.vhat.NT <- fit$v.hat[2:(1 + Q), 2:(1 + Q)]
   sub.vhat.T <- fit$v.hat[(1 + Q + 1):(1 + 2*Q), (1 + Q + 1):(1 + 2*Q)]
   sub.vhat.OR <- fit$v.hat[(1 + 2*Q + 1):(1 + 3*Q), (1 + 2*Q + 1):(1 + 3*Q)]

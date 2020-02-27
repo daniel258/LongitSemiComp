@@ -12,6 +12,7 @@
 #' @return A list with at-risk indicators for each unit in each interval (risk.NT and risk.T) and outcome data
 #'  at each interval (YNT and YT).
 #' @examples
+#' \dontrun{
 #' # Simulate semicompeting risks data
 #' library(MASS)
 #' set.seed(123456)
@@ -47,12 +48,7 @@
 #' longit.data$YT[1:3,]
 #' longit.data$risk.NT[1:3,]
 #' longit.data$risk.T[1:3,]
-# \dontrun{
-# if(interactive()){
-#  #EXAMPLE1
-#  }
-# }
-#' @rdname TimesToLongit
+#' }
 # I want the following two lines in the namespace, can be moved to other files if this script is deleted
 #'@useDynLib LongitSemiComp 
 #'@importFrom Rcpp evalCpp 

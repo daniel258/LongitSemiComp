@@ -1,7 +1,7 @@
-#' @title The function that simulates data form longitudinal bivariate binary semicompeting risks data with baseline covarites
+#' @title The function that simulates data form longitudinal bivariate binary semicompeting risks data with baseline covariates
 #' @description Given observed non-terminal and terminal event times, censoring indicators and possible left-truncation, 
 #' this function returns the outcome data in the longitudinal bivariate binary representation according to given interval partition
-#'  as proposed in Nevo et al.
+#'  as proposed in Nevo et al.(2020+)
 #' @param n.sample Desired sample size.
 #' @param times A vector of increasing times. Normally of equal length
 #' @param alpha.nt True value for \eqn{\alpha_1(t)} for each \eqn{t} in \code{times}.
@@ -13,15 +13,17 @@
 #' @param beta.y True value for \eqn{\beta_y}.
 #' @param X A matrix of time-fixed covariates to be used for simulating the data. Number of rows should be 
 #' \code{n.sample} and 
-#' number of columns should be equal to \code{length(beta.nt)}. If not specfied, \code{X} is simulated 
+#' number of columns should be equal to \code{length(beta.nt)}. If not specified, \code{X} is simulated 
 #' as iid Gaussian random variables.
 #' @return A list with the covariates used (\code{X}), at-risk indicators for each unit at each interval
 #'  (\code{risk.NT} and \code{risk.T}) and outcome data
 #'  at each interval (\code{YNT} and \code{YT}).
+#'  
 #' @examples
+#' \dontrun{
 #' # Simulate semicompeting risks data
 #' set.seed(314)
-#' times <- seq(1,15,1)
+#' times <- seq(1, 15, 1)
 #' alpha.nt <- LongitSemiComp:::logit(dchisq(times,3, ncp =5)/2 + 0.025)
 #' alpha.t <- LongitSemiComp:::logit(times*(0.075/10)  - 0.0005*(times/20)^2  + 0.05)
 #' alpha.or <- 0.15 - times/10 + 0.75*(times/10)^2 + 0.3*(times/20)^3
@@ -32,15 +34,14 @@
 #' beta.t <- log(c(0.5, 1))
 #' beta.or <- log(c(1, 1))
 #' beta.y <- log(1.4)
-#'   my.data <- SimLongitData(n.sample = 200, times = times,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or)
-#'    longit.data <- my.data[-1]
-#'    X <- my.data[1]
-# \dontrun{
-# if(interactive()){
-#  #EXAMPLE1
-#  }
-# }
-#'  @author Daniel Nevo
+#' my.data <- SimLongitData(n.sample = 200, times = times,  beta.y,  
+#'                          alpha.nt, alpha.t, alpha.or, 
+#'                          beta.nt, beta.t, beta.or)
+#' longit.data <- my.data[-1]
+#' X <- my.data[1]
+#' }
+#'
+#' @author Daniel Nevo
 #' @export
 SimLongitData <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or, X = NULL)
 {
