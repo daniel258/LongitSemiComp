@@ -10,9 +10,9 @@ LongitSC(longit.data, times = NULL, formula.NT, formula.T,
   lambda = 0, init = NULL, maxit.optim = 50000)
 }
 \arguments{
-\item{longit.data}{A a list with columns named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. See details below.}
+\item{longit.data}{A list with entries named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. See details below.}
 
-\item{times}{Vector of increasing times (for example, the interval partition points \eqn{\tau_1}... \eqn{\tau_K}).
+\item{times}{A vector of increasing times (for example, the interval partition points \eqn{\tau_1}... \eqn{\tau_K}).
 This vector is used to construct the B-splines}
 
 \item{formula.NT}{A formula of the form \code{ ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
@@ -51,7 +51,7 @@ functions and implements penalized maximum likelihood to fit the model.
 Each of the matrices in \code{longit.data},  \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT} have a row for each
 unit and a column for each interval. Then, \code{risk.NT} and \code{risk.T} indicate whether the unit is at risk in each interval
 for each of the events, respectively.  The matrices \code{YNT} and \code{YT} indicate whether the non-terminal and terminal
-event, respectively, were obsreved by the end of each interval.
+event, respectively, were observed by the end of each interval.
 The function \code{\link{TimesToLongit}} can be used to obtain this representation of semicompeting risks time-to-event data.
 }
 \note{

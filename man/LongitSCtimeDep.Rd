@@ -44,15 +44,15 @@ the time-varying functions and coefficients.
 \description{
 The function implements the proposed methodology in Nevo et al. (2020+) for time-depending covariates under 
 possible right censoring and left truncation. Data should be first converted to longitudinal bivariate binary representation,
-similiar to the counting-process representation. See details below.
+similar to the counting-process representation. See details below.
 The \code{LongitSCtimeDep} function uses B-splines representation the time-varying functions
 and implements penalized maximum likelihood to fit the model.
 }
 \details{
-For \code{data}, the represenation is similiar for the counting process represenation for survival data. 
-\code{ID} identify each person, where \code{TM} identifes the intervals in which this person is under followup.
-\code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
- See examples in  \code{\link{SimLongitDataTimeDep}}
+For \code{data}, the representation is similar to the counting process representation of time-to-event data.  
+\code{ID} identify each person, where \code{TM} identifies the intervals in which this person is under followup.
+\code{YNT} and \code{YT} indicate whether a non-terminal event and the terminal event occurred by the end of interval \code{TM}.
+See examples in  \code{\link{SimLongitDataTimeDep}}.
 }
 \note{
 For unrestricted baseline functions (no B-splines or penalization) use \code{\link{LongitSCparamTimeDep}}.

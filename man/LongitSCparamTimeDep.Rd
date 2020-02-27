@@ -43,15 +43,16 @@ similiar to the counting-process representation. See details below. This functio
 parameter for each interval. As a result, it contains more parameters and carry out parametric inference.
 }
 \details{
-For \code{data}, the represenation is similiar for the counting process represenation for survival data. 
-\code{ID} identify each person, where \code{TM} identifes the intervals in which this person is under followup.
-\code{YNT} and \code{YT} indicate whetehr a non-terminal event and the terminal event occured by the end of interval \code{TM}.
-See examples in  \code{\link{SimLongitDataTimeDep}}
+For \code{data}, the representation is similar to the counting process representation of time-to-event data.  
+\code{ID} identify each person, where \code{TM} identifies the intervals in which this person is under followup.
+\code{YNT} and \code{YT} indicate whether a non-terminal event and the terminal event occurred by the end of interval \code{TM}.
+See examples in  \code{\link{SimLongitDataTimeDep}}.
 }
 \note{
 For B-splines model for the time-varying function with penalized maximum likelihood use \code{\link{LongitSCtimeDep}}.
 For time-fixed covariates use \code{\link{LongitSCtimeDep}}.
-#' @examples
+}
+\examples{
 \dontrun{
 # Simulate semicompeting risks data
 set.seed(314)
@@ -78,6 +79,7 @@ res <- LongitSCparamTimeDep(data = my.df, times = times,  formula.NT = YNT ~ X.1
                             formula.OR = ~ X.1 + X.2)
  res
 }
+
 }
 \author{
 Daniel Nevo

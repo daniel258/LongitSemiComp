@@ -2,7 +2,7 @@
 % Please edit documentation in R/SimLongitDataTimeDep.R
 \name{SimLongitDataTimeDep}
 \alias{SimLongitDataTimeDep}
-\title{The function that simulates data form longitudinal bivariate binary semicompeting risks data with time-varying covarites}
+\title{The function that simulates data form longitudinal bivariate binary semicompeting risks data with time-depending covariates}
 \usage{
 SimLongitDataTimeDep(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
   alpha.or, beta.nt, beta.t, beta.or, cens.poten.rate = 0)
@@ -26,20 +26,20 @@ SimLongitDataTimeDep(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
 
 \item{beta.or}{True value for \eqn{\beta_\theta}.}
 
-\item{cens.poten.rate}{Potential cenosoring rate. At each time interval the probability of each alive observation to be censored}
+\item{cens.poten.rate}{Potential censoring rate. At each time interval the probability of each alive observation to be censored}
 }
 \value{
-A list with two objects: \code{df.return} returns the data in a way similiat to counting process presentation, 
+A list with two objects: \code{df.return} returns the data in a way similar to counting process presentation, 
 each unique \code{ID} has multiple rows, one for each interval. A time-fixed normally distributed random variable and 
 a binary time-dependent covariate simulated as described in Nevo et al (\code{X}). The outcome data at each interval
- is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
- This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
- track of the censoring rate when simulating data.
+is given by \code{YNT} and \code{YT}. The second returned object is \code{cens}, a vector with per-person censoring indicator.
+This is not needed for the analysis as the data has a counting-process style representation, but it is useful for keeping
+track of the censoring rate when simulating data.
 }
 \description{
 Given observed non-terminal and terminal event times, censoring indicators and possible left-truncation, 
 this function returns the outcome data in the longitudinal bivariate binary representation according to given interval partition
- as proposed in Nevo et al.
+ as proposed in Nevo et al. (2020+)
 }
 \examples{
 \dontrun{
