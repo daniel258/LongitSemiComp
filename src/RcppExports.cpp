@@ -6,6 +6,25 @@
 
 using namespace Rcpp;
 
+// GradParamLogLik
+arma::vec GradParamLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat XNT, arma::mat XT, arma::mat XOR, double epsOR);
+RcppExport SEXP _LongitSemiComp_GradParamLogLik(SEXP paramSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP epsORSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XNT(XNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XT(XTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XOR(XORSEXP);
+    Rcpp::traits::input_parameter< double >::type epsOR(epsORSEXP);
+    rcpp_result_gen = Rcpp::wrap(GradParamLogLik(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, epsOR));
+    return rcpp_result_gen;
+END_RCPP
+}
 // GradParamLogLikPersTimeDep
 arma::mat GradParamLogLikPersTimeDep(arma::vec param, arma::vec ID, arma::uvec TM, arma::vec YT, arma::vec YNT, arma::mat XNT, arma::mat XT, arma::mat XOR, double epsOR);
 RcppExport SEXP _LongitSemiComp_GradParamLogLikPersTimeDep(SEXP paramSEXP, SEXP IDSEXP, SEXP TMSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP epsORSEXP) {
@@ -188,6 +207,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ParamLogLik
+double ParamLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::mat riskNT, arma::mat riskT, arma::mat XNT, arma::mat XT, arma::mat XOR, double epsOR);
+RcppExport SEXP _LongitSemiComp_ParamLogLik(SEXP paramSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP riskNTSEXP, SEXP riskTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP epsORSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type param(paramSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type YT(YTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type YNT(YNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type riskNT(riskNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type riskT(riskTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XNT(XNTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XT(XTSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XOR(XORSEXP);
+    Rcpp::traits::input_parameter< double >::type epsOR(epsORSEXP);
+    rcpp_result_gen = Rcpp::wrap(ParamLogLik(param, YT, YNT, riskNT, riskT, XNT, XT, XOR, epsOR));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ParamLogLikTimeDep
 double ParamLogLikTimeDep(arma::vec param, arma::vec ID, arma::uvec TM, arma::vec YT, arma::vec YNT, arma::mat XNT, arma::mat XT, arma::mat XOR, double epsOR);
 RcppExport SEXP _LongitSemiComp_ParamLogLikTimeDep(SEXP paramSEXP, SEXP IDSEXP, SEXP TMSEXP, SEXP YTSEXP, SEXP YNTSEXP, SEXP XNTSEXP, SEXP XTSEXP, SEXP XORSEXP, SEXP epsORSEXP) {
@@ -350,6 +388,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_LongitSemiComp_GradParamLogLik", (DL_FUNC) &_LongitSemiComp_GradParamLogLik, 9},
     {"_LongitSemiComp_GradParamLogLikPersTimeDep", (DL_FUNC) &_LongitSemiComp_GradParamLogLikPersTimeDep, 9},
     {"_LongitSemiComp_GradParamLogLikTimeDep", (DL_FUNC) &_LongitSemiComp_GradParamLogLikTimeDep, 9},
     {"_LongitSemiComp_GradPenalLogLik", (DL_FUNC) &_LongitSemiComp_GradPenalLogLik, 12},
@@ -359,6 +398,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_LongitSemiComp_GradPenalLogLikPersTimeDep", (DL_FUNC) &_LongitSemiComp_GradPenalLogLikPersTimeDep, 12},
     {"_LongitSemiComp_GradPenalLogLikTimeDep", (DL_FUNC) &_LongitSemiComp_GradPenalLogLikTimeDep, 12},
     {"_LongitSemiComp_OddsRatioTime", (DL_FUNC) &_LongitSemiComp_OddsRatioTime, 4},
+    {"_LongitSemiComp_ParamLogLik", (DL_FUNC) &_LongitSemiComp_ParamLogLik, 9},
     {"_LongitSemiComp_ParamLogLikTimeDep", (DL_FUNC) &_LongitSemiComp_ParamLogLikTimeDep, 9},
     {"_LongitSemiComp_PenalLogLik", (DL_FUNC) &_LongitSemiComp_PenalLogLik, 12},
     {"_LongitSemiComp_PenalLogLikNoX", (DL_FUNC) &_LongitSemiComp_PenalLogLikNoX, 9},

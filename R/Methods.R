@@ -14,7 +14,13 @@
    cat("\n Non-terminal event:\n")
    coef.NT <- x$coef.NT
    exp.coef.NT <- exp(coef.NT)
+   if (!is.null(x$se.rob.NT))
+   {
    sd.err.NT <- x$se.rob.NT
+   } else {
+      warning("No robust SE found, using standard SE for parameters associated with the non-terminal event")
+      sd.err.NT <- x$se.NT
+   }
    zvalue.NT <- coef.NT/sd.err.NT
    pvalue.NT <- 2*pnorm(abs(zvalue.NT),lower.tail = F)
    coef.table.NT <- cbind(coef.NT, sd.err.NT, exp.coef.NT, zvalue.NT, pvalue.NT)
@@ -26,7 +32,13 @@
    coef.T <- x$coef.T
    exp.coef.T <- exp(coef.T)
    coef.T.names <- x$T.varnames
-   sd.err.T <- x$se.rob.T
+   if (!is.null(x$se.rob.T))
+   {
+      sd.err.T <- x$se.rob.T
+   } else {
+      warning("No robust SE found, using standard SE for parameters associated with the terminal event")
+      sd.err.T <- x$se.T
+   } 
    zvalue.T <- coef.T/sd.err.T
    pvalue.T <- 2*pnorm(abs(zvalue.T),lower.tail = F)
    coef.table.T <- cbind(coef.T, sd.err.T, exp.coef.T,  zvalue.T, pvalue.T)
@@ -37,7 +49,13 @@
    coef.OR <- x$coef.OR
    exp.coef.OR <- exp(coef.OR)
    coef.OR.names <- x$OR.varnames
-   sd.err.OR <- x$se.rob.OR
+   if (!is.null(x$se.rob.OR))
+   {
+      sd.err.T <- x$se.rob.OR
+   } else {
+      warning("No robust SE found, using standard SE for parameters associated with the odds ratio")
+      sd.err.OR <- x$se.OR
+   }   
    zvalue.OR <- coef.OR/sd.err.OR
    pvalue.OR <- 2*pnorm(abs(zvalue.OR),lower.tail = F)
    coef.table.OR <- cbind(coef.OR, sd.err.OR, exp.coef.OR, zvalue.OR, pvalue.OR)
