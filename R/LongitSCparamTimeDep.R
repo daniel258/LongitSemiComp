@@ -10,11 +10,11 @@
 #' @param times Vector of increasing times (for example, the interval partition points \eqn{\tau_1,}..., \eqn{\tau_K}).
 #' This vector is used to construct the B-splines
 #' @param formula.NT A formula of the form \code{YNT ~ x1 + x2} where \code{x1} and \code{x2} are covariates to be used for 
-#' for the non terminal probability sub-model.
+#' the non terminal probability sub-model.
 #' @param formula.T A formula of the form \code{YT ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
-#' for the terminal probability sub-model.
+#' the terminal probability sub-model.
 #' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
-#' for the odds ratio sub-model.
+#' the odds ratio sub-model.
 #' @param epsOR How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
 #' @param init Initial values for the parameters.
 #' @param maxit.optim For internal use of \code{optim}. Default is 50000
