@@ -19,10 +19,10 @@ This vector is used to construct the B-splines}
 the non-terminal event probability sub-model.}
 
 \item{formula.T}{A formula of the form \code{ ~ x1 + x3} where \code{x1} and \code{x3} are covariates to be used for 
-for the non-terminal event probability sub-model.}
+the non-terminal event probability sub-model.}
 
 \item{formula.OR}{A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
-for the odds ratio sub-model.}
+the odds ratio sub-model.}
 
 \item{data}{A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.}
 
