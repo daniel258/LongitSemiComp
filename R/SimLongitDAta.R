@@ -76,7 +76,7 @@ SimLongitData <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, 
     # at risk for terminal event only
     if (sum(at.risk.T.only)>0)
     {
-      if (!is.null(gamma.inter)) {
+      if (is.null(gamma.inter)) {
         probs.T.only <- expit(alpha.t[k] + X[at.risk.T.only, ]%*%beta.t + beta.y)
       } else {
         probs.T.only <- expit(alpha.t[k] + X[at.risk.T.only, ]%*%beta.t + beta.y + X[at.risk.T.only, ]%*%gamma.inter)
