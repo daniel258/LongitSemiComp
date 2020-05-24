@@ -5,9 +5,17 @@
 \title{The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-fixed covariates
 and using unstrucutred representation for the time-varying functions.}
 \usage{
-LongitSCparam(longit.data, times = NULL, formula.NT, formula.T,
-  formula.OR = NULL, data, epsOR = 10^(-10), init = NULL,
-  maxit.optim = 50000)
+LongitSCparam(
+  longit.data,
+  times = NULL,
+  formula.NT,
+  formula.T,
+  formula.OR = NULL,
+  data,
+  epsOR = 10^(-10),
+  init = NULL,
+  maxit.optim = 50000
+)
 }
 \arguments{
 \item{longit.data}{A list with entries named \code{risk.NT}, \code{risk.T},  \code{YNT}, \code{YT}. See details below.}

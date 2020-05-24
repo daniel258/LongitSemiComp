@@ -5,9 +5,18 @@
 \title{The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-depending
 covariates, and using P-splines for the time-varying functions.}
 \usage{
-LongitSCtimeDep(times = NULL, data, formula.NT, formula.T,
-  formula.OR = NULL, epsOR = 10^(-10), knots = NULL, lambda = 0,
-  init = NULL, maxit.optim = 50000)
+LongitSCtimeDep(
+  times = NULL,
+  data,
+  formula.NT,
+  formula.T,
+  formula.OR = NULL,
+  epsOR = 10^(-10),
+  knots = NULL,
+  lambda = 0,
+  init = NULL,
+  maxit.optim = 50000
+)
 }
 \arguments{
 \item{times}{Vector of increasing times (for example, the interval partition points \eqn{\tau_1,}..., \eqn{\tau_K}).

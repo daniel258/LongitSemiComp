@@ -4,8 +4,18 @@
 \alias{SimLongitDataTimeDep}
 \title{The function that simulates data form longitudinal bivariate binary semicompeting risks data with time-depending covariates}
 \usage{
-SimLongitDataTimeDep(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
-  alpha.or, beta.nt, beta.t, beta.or, cens.poten.rate = 0)
+SimLongitDataTimeDep(
+  n.sample,
+  times = 1:100,
+  beta.y,
+  alpha.nt,
+  alpha.t,
+  alpha.or,
+  beta.nt,
+  beta.t,
+  beta.or,
+  cens.poten.rate = 0
+)
 }
 \arguments{
 \item{n.sample}{Desired sample size.}

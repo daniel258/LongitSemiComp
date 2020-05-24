@@ -4,8 +4,19 @@
 \alias{SimLongitData}
 \title{The function that simulates data form longitudinal bivariate binary semicompeting risks data with baseline covariates}
 \usage{
-SimLongitData(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
-  alpha.or, beta.nt, beta.t, beta.or, X = NULL)
+SimLongitData(
+  n.sample,
+  times = 1:100,
+  beta.y,
+  alpha.nt,
+  alpha.t,
+  alpha.or,
+  beta.nt,
+  beta.t,
+  beta.or,
+  gamma.inter = NULL,
+  X = NULL
+)
 }
 \arguments{
 \item{n.sample}{Desired sample size.}
@@ -25,6 +36,8 @@ SimLongitData(n.sample, times = 1:100, beta.y, alpha.nt, alpha.t,
 \item{beta.t}{True value for \eqn{\beta_2}.}
 
 \item{beta.or}{True value for \eqn{\beta_\theta}.}
+
+\item{gamma.inter}{True value for \eqn{\gamma_[inter]}}
 
 \item{X}{A matrix of time-fixed covariates to be used for simulating the data. Number of rows should be 
 \code{n.sample} and 

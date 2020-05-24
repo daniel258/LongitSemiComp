@@ -5,9 +5,16 @@
 \title{The function to fit a longitudinal bivariate binary model for semi-competing risks data with time-depending 
 covariates and using unrestricted (per-interval parameter) time-varying functions.}
 \usage{
-LongitSCparamTimeDep(times = NULL, data, formula.NT, formula.T,
-  formula.OR = NULL, epsOR = 10^(-10), init = NULL,
-  maxit.optim = 50000)
+LongitSCparamTimeDep(
+  times = NULL,
+  data,
+  formula.NT,
+  formula.T,
+  formula.OR = NULL,
+  epsOR = 10^(-10),
+  init = NULL,
+  maxit.optim = 50000
+)
 }
 \arguments{
 \item{times}{Vector of increasing times (for example, the interval partition points \eqn{\tau_1,}..., \eqn{\tau_K}).

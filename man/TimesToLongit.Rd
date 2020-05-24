@@ -4,8 +4,15 @@
 \alias{TimesToLongit}
 \title{Transfomring semicompeting risks outcome data to longitudinal bivariate binary representation}
 \usage{
-TimesToLongit(T1, T2, delta1, delta2, inter.vec, TruncData = F,
-  TruncTime = NULL)
+TimesToLongit(
+  T1,
+  T2,
+  delta1,
+  delta2,
+  inter.vec,
+  TruncData = F,
+  TruncTime = NULL
+)
 }
 \arguments{
 \item{T1}{Observed non-terminal event time.}
