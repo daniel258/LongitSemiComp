@@ -51,7 +51,7 @@
    coef.OR.names <- x$OR.varnames
    if (!is.null(x$se.rob.OR))
    {
-      sd.err.T <- x$se.rob.OR
+      sd.err.OR <- x$se.rob.OR
    } else {
       warning("No robust SE found, using standard SE for parameters associated with the odds ratio")
       sd.err.OR <- x$se.OR

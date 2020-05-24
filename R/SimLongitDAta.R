@@ -11,6 +11,7 @@
 #' @param beta.t True value for \eqn{\beta_2}. 
 #' @param beta.or True value for \eqn{\beta_\theta}.
 #' @param beta.y True value for \eqn{\beta_y}.
+#' @param gamma.inter True value for \eqn{\gamma_[inter]}
 #' @param X A matrix of time-fixed covariates to be used for simulating the data. Number of rows should be 
 #' \code{n.sample} and 
 #' number of columns should be equal to \code{length(beta.nt)}. If not specified, \code{X} is simulated 
@@ -43,7 +44,8 @@
 #'
 #' @author Daniel Nevo
 #' @export
-SimLongitData <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or, X = NULL)
+SimLongitData <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, alpha.or, beta.nt, beta.t, beta.or, 
+                          gamma.inter=NULL, X = NULL)
 {
   if (length(alpha.nt) != length(times)) {stop("alpha.nt should be in the same length as times")}
   if (length(alpha.t) != length(times)) {stop("alpha.t should be in the same length as times")}
@@ -74,7 +76,11 @@ SimLongitData <- function(n.sample, times = 1:100,  beta.y,  alpha.nt, alpha.t, 
     # at risk for terminal event only
     if (sum(at.risk.T.only)>0)
     {
-      probs.T.only <- expit(alpha.t[k] + X[at.risk.T.only, ]%*%beta.t + beta.y)
+      if (!is.null(gamma.inter)) {
+        probs.T.only <- expit(alpha.t[k] + X[at.risk.T.only, ]%*%beta.t + beta.y)
+      } else {
+        probs.T.only <- expit(alpha.t[k] + X[at.risk.T.only, ]%*%beta.t + beta.y + X[at.risk.T.only, ]%*%gamma.inter)
+        }
       YT[at.risk.T.only, k] <- rbinom(sum(at.risk.T.only), 1, probs.T.only)
     }
     #at risk for both events
