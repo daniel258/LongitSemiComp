@@ -115,6 +115,7 @@ LongitSCparamInter <- function(longit.data, times = NULL, formula.NT, formula.T,
     fit$coef.NT <- fit$est[(1 + 3*K + 1):(1 + 3*K + pNT)]
     fit$coef.T <- fit$est[(1 + 3*K + pNT + 1):(1 + 3*K + pNT + pT)]
     fit$coef.OR <- fit$est[(1 + 3*K + pNT + pT + 1):(1 + 3*K + pNT + pT + pOR)]
+    fit$coef.OR <- fit$est[(1 + 3*K + pNT + pT + pOR + 1):(1 + 3*K + pNT + pT + pInter)]
     fit$se.longterm <- fit$se[1]
     fit$se.NT <- fit$se[(1 + 3*K + 1):(1 + 3*K + pNT)]
     fit$se.T <- fit$se[(1 + 3*K + pNT + 1):(1 + 3*K + pNT + pT)]
