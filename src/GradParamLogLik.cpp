@@ -31,7 +31,7 @@ arma::vec GradParamLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::ma
   double cij = 0;
   double nuij = 0;
  // double x = 0;
-  double b = 0;
+//double b = 0;
   double ExpAlphaNTnow = 0;
   double ExpAlphaTnow = 0;
   double ExpAlphaORnow = 0;
@@ -145,8 +145,6 @@ arma::vec GradParamLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::ma
               cij = (iProb1 + iProb2)*(iOR - 1);
               nuij = sqrt(pow(1 + cij, 2.0) - 4*iOR*(iOR - 1)*iProb1*iProb2);
               iProb12 = (1 + cij - nuij) / (2 * (iOR - 1));
-
-            // Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
       if (YNT(i,j)==1 && YT(i,j)==1) {
               iGrad[1 + j] = 0.5*iProb1*(1 - iProb1) * (nuij - 1 - cij + 2*iOR*iProb2)/(nuij*iProb12);
               iGrad[J + 1 + j] = 0.5*iProb2*(1 - iProb2) * (nuij - 1 - cij + 2*iOR*iProb1)/(nuij*iProb12);
@@ -228,16 +226,6 @@ arma::vec GradParamLogLik(arma::vec param, arma::mat YT, arma::mat YNT, arma::ma
           (2*(iOR - 1)*(iOR - 1)*(1 - iProb1 - iProb2 + iProb12));
       }}
       }}}
-      // Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
-      // if (arma::is_finite(iContrib)) {} else {
-      //   Rcpp::Rcout << "iContrib "<< iContrib << std::endl;
-      //   Rcpp::Rcout << "j =  "<< j << std::endl;
-      //   Rcpp::Rcout << "i =  "<< i << std::endl;
-      //   Rcpp::Rcout << "iProb1  "<< iProb1 << std::endl;
-      //   Rcpp::Rcout << "iProb2  "<< iProb2 << std::endl;
-      //   Rcpp::Rcout << "iProb12  "<< iProb12 << std::endl;
-      //   Rcpp::Rcout << "iOR  "<< iOR << std::endl;}
-//        Rcpp::Rcout << "iORCOND  "<< iORcond << std::endl;}
       Grad += iGrad;
     }}
   return(-Grad);
