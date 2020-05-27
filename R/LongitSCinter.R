@@ -117,6 +117,11 @@ LongitSCinter <- function(longit.data, times = NULL, formula.NT, formula.T, form
     fit$optim.conv <- res.opt$convergence
     fit$est <- res.opt$par
     fit$penal.lik <- -res.opt$value 
+    fit$lik <- PenalLogLikWithInter(param = fit$est, epsOR = epsOR, 
+                                    XNT = XNTmat, XT = XTmat, XOR = XORmat, XinterMat = XinterMat, 
+                                    YNT = longit.data$YNT, YT = longit.data$YT,  
+                                    riskNT = longit.data$risk.NT, riskT = longit.data$risk.T, 
+                                    TimeBase = Bsplines, TimePen = S.penal, lambda = rep(0,3)) # used for aic
     fit$hess.penal <- res.opt$hessian
     fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
     my.grad.sqrd <- GradPenalLogLikPersWithInter(param = res.opt$par, epsOR = epsOR,
