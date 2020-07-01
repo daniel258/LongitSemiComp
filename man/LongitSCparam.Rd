@@ -11,6 +11,7 @@ LongitSCparam(
   formula.NT,
   formula.T,
   formula.OR = NULL,
+  formula.inter = ~1,
   data,
   epsOR = 10^(-10),
   init = NULL,
@@ -31,6 +32,9 @@ for the non-terminal event probability sub-model.}
 
 \item{formula.OR}{A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for
 for the odds ratio sub-model.}
+
+\item{formula.inter}{A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
+the interavtion between non-terminal event and covariates sub-model.}
 
 \item{data}{A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.}
 

@@ -12,6 +12,8 @@
 #' for the non-terminal event probability sub-model.
 #' @param formula.OR A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for
 #' for the odds ratio sub-model.
+#' @param  formula.inter A formula of the form \code{ ~ x1 + x4} where \code{x1} and \code{x4} are covariates to be used for 
+#' the interavtion between non-terminal event and covariates sub-model.
 #' @param data A data.frame with the covariates specified in \code{formula.NT}, \code{formula.T} and \code{formula.OR}.
 #' @param epsOR How close it the OR allowed to be to one before assuming it equals to one. Default is \code{10^(-10)}
 #' @param init Initial values for the parameters.
@@ -51,8 +53,8 @@
 #' }
 #' @author Daniel Nevo
 #' @export
-LongitSCparam <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, data,
-                     epsOR = 10^(-10), init = NULL, maxit.optim = 50000)
+LongitSCparam <- function(longit.data, times = NULL, formula.NT, formula.T, formula.OR = NULL, formula.inter = ~ 1, data,
+                               epsOR = 10^(-10), init = NULL, maxit.optim = 50000)
 {
   if (!is.null(formula.NT)) {
     XNTmat <- as.matrix(model.matrix(formula.NT, data = data)[, -1])
@@ -60,14 +62,14 @@ LongitSCparam <- function(longit.data, times = NULL, formula.NT, formula.T, form
   } else {
     XNTmat <- NULL
     pNT <- 0
-    }
+  }
   if (!is.null(formula.T)) {
     XTmat <- as.matrix(model.matrix(formula.T, data = data)[, -1])
     pT <- ncol(XTmat)
   } else {
     XTmat <- NULL
     pT <- 0
-    }
+  }
   if (!is.null(formula.OR)) {
     XORmat <- as.matrix(model.matrix(formula.OR, data = data)[, -1])
     pOR <- ncol(XORmat)
@@ -75,65 +77,77 @@ LongitSCparam <- function(longit.data, times = NULL, formula.NT, formula.T, form
     XORmat <- NULL
     pOR <- 0
   }
+  if (!is.null(formula.inter)) {
+    XinterMat <- as.matrix(model.matrix(formula.inter, data = data)) # we need the intercept for beta_y
+    pInter <- ncol(XinterMat)
+  } else {
+    XinterMat <- NULL
+    pInter <- 0
+  }
   K <- ncol(longit.data$YNT)
   if (is.null(times)) times <- 1:K
-  p <- pNT + pT + pOR
-  n.params <- 1 + 3*K + p
+  p <- pNT + pT + pOR + pInter
+  n.params <- 3*K + p
   if (is.null(init))
   {
     init <- rep(-0.1,n.params)
   }
   res.opt <- optim(par = init, fn = ParamLogLik, gr = GradParamLogLik, hessian = T,
                    control = list(maxit = maxit.optim), method = "L-BFGS-B", epsOR = epsOR,
-                   XNT = XNTmat, XT = XTmat, XOR = XORmat,
+                   XNT = XNTmat, XT = XTmat, XOR = XORmat, XinterMat = XinterMat,
                    YNT = longit.data$YNT, YT = longit.data$YT,
                    riskNT = longit.data$risk.NT, riskT = longit.data$risk.T)
-    fit <- list()
-    fit$formula.NT <- formula.NT
-    fit$formula.T <- formula.T
-    fit$formula.OR <- formula.OR
-    fit$optim.conv <- res.opt$convergence
-    fit$est <- res.opt$par
-    fit$lik <- -res.opt$value
-    fit$hess <- res.opt$hessian
-    fit$v.hat <- solve(res.opt$hessian)
-    fit$se <- sqrt(diag(fit$v.hat))
-    if (any(is.nan(fit$se)))
-    {
-      fit$se[is.nan(fit$se)] <- 100
-      warning("close to infinite SE for some parameters, set SE=100")
-    }
-    fit$coef.longterm <-  fit$est[1]
-    fit$time.int.NT <- expit(fit$est[2:(1 + K)])
-    fit$time.int.T <- expit(fit$est[(1 + K + 1):(1 + 2*K)])
-    fit$time.int.OR <- exp(fit$est[(1 + 2*K + 1):(1 + 3*K)])
-    fit$coef.NT <- fit$est[(1 + 3*K + 1):(1 + 3*K + pNT)]
-    fit$coef.T <- fit$est[(1 + 3*K + pNT + 1):(1 + 3*K + pNT + pT)]
-    fit$coef.OR <- fit$est[(1 + 3*K + pNT + pT + 1):(1 + 3*K + pNT + pT + pOR)]
-    fit$se.longterm <- fit$se[1]
-    fit$se.NT <- fit$se[(1 + 3*K + 1):(1 + 3*K + pNT)]
-    fit$se.T <- fit$se[(1 + 3*K + pNT + 1):(1 + 3*K + pNT + pT)]
-    fit$se.OR <- fit$se[(1 + 3*K + pNT + pT + 1):(1 + 3*K + pNT + pT + pOR)]
+  fit <- list()
+  fit$formula.NT <- formula.NT
+  fit$formula.T <- formula.T
+  fit$formula.OR <- formula.OR
+  fit$formula.inter <- formula.inter
+  fit$optim.conv <- res.opt$convergence
+  fit$est <- res.opt$par
+  fit$lik <- -res.opt$value
+  fit$hess <- res.opt$hessian
+  fit$v.hat <- solve(res.opt$hessian)
+  fit$se <- sqrt(diag(fit$v.hat))
+  if (any(is.nan(fit$se)))
+  {
+    fit$se[is.nan(fit$se)] <- 100
+    warning("close to infinite SE for some parameters, set SE=100")
+  }
+  fit$time.int.NT <- expit(fit$est[1:K])
+  fit$time.int.T <- expit(fit$est[(K + 1):(2*K)])
+  fit$time.int.OR <- exp(fit$est[(2*K + 1):(3*K)])
+  fit$coef.NT <- fit$est[(3*K + 1):(3*K + pNT)]
+  fit$coef.T <- fit$est[(3*K + pNT + 1):(3*K + pNT + pT)]
+  fit$coef.OR <- fit$est[(3*K + pNT + pT + 1):(3*K + pNT + pT + pOR)]
+  fit$coef.inter <- fit$est[(3*K + pNT + pT + pOR + 1):(3*K + pNT + pT + pOR + pInter)]
+  fit$se.coef.NT <- fit$se[(3*K + 1):(3*K + pNT)]
+  fit$se.coef.T <- fit$se[(3*K + pNT + 1):(3*K + pNT + pT)]
+  fit$se.coef.OR <- fit$se[(3*K + pNT + pT + 1):(3*K + pNT + pT + pOR)]
+  fit$se.coef.inter <- fit$se[(3*K + pNT + pT + pOR + 1):(3*K + pNT + pT + pOR + pInter)]
   # calculate ci for the baseline prob.T1, prob.T2 and OR.
   # Using the appropriate transformation of the CI for B%*%eta
-  sub.vhat.NT <- fit$v.hat[2:(1 + K), 2:(1 + K)]
-  sub.vhat.T <- fit$v.hat[(1 + K + 1):(1 + 2*K), (1 + K + 1):(1 + 2*K)]
-  sub.vhat.OR <- fit$v.hat[(1 + 2*K + 1):(1 + 3*K), (1 + 2*K + 1):(1 + 3*K)]
-  fit$ci.L.alpha.NT <- expit(fit$est[2:(1 + K)] - qnorm(0.975)* fit$se[2:(1 + K)])
-  fit$ci.H.alpha.NT <- expit(fit$est[2:(1 + K)] + qnorm(0.975)* fit$se[2:(1 + K)])
-  fit$ci.L.alpha.T <- expit(fit$est[(1 + K + 1):(1 + 2*K)] - qnorm(0.975) * fit$se[(1 + K + 1):(1 + 2*K)])
-  fit$ci.H.alpha.T <- expit(fit$est[(1 + K + 1):(1 + 2*K)] + qnorm(0.975) * fit$se[(1 + K + 1):(1 + 2*K)])
-  fit$ci.L.alpha.OR <- exp(fit$est[(1 + 2*K + 1):(1 + 3*K)] - qnorm(0.975) * fit$se[(1 + 2*K + 1):(1 + 3*K)])
-  fit$ci.H.alpha.OR <- exp(fit$est[(1 + 2*K + 1):(1 + 3*K)] + qnorm(0.975) * fit$se[(1 + 2*K + 1):(1 + 3*K)])
+  sub.vhat.NT <- fit$v.hat[1:K, 1:K]
+  sub.vhat.T <- fit$v.hat[(K + 1):(2*K), (K + 1):(2*K)]
+  sub.vhat.OR <- fit$v.hat[(2*K + 1):(3*K), (2*K + 1):(3*K)]
+  fit$ci.L.alpha.NT <- expit(fit$est[1:K] - qnorm(0.975)* sqrt(diag(sub.vhat.NT)))
+  fit$ci.H.alpha.NT <- expit(fit$est[1:K] + qnorm(0.975)* sqrt(diag(sub.vhat.NT)))
+  fit$ci.L.alpha.T <- expit(fit$est[(K + 1):(2*K)] - qnorm(0.975) * sqrt(diag(sub.vhat.T)))
+  fit$ci.H.alpha.T <- expit(fit$est[(K + 1):(2*K)] + qnorm(0.975) * sqrt(diag(sub.vhat.T)))
+  fit$ci.L.alpha.OR <- exp(fit$est[(2*K + 1):(3*K)] - qnorm(0.975) * sqrt(diag(sub.vhat.OR)))
+  fit$ci.H.alpha.OR <- exp(fit$est[(2*K + 1):(3*K)] + qnorm(0.975) * sqrt(diag(sub.vhat.OR)))
   if (pNT==1) {
-    names(fit$coef.NT) <- names(fit$se.NT) <- all.vars(formula.NT)} else {
-      names(fit$coef.NT) <- names(fit$se.NT) <- colnames(XNTmat)}
+    names(fit$coef.NT) <- names(fit$se.coef.NT) <- all.vars(formula.NT)} else {
+      names(fit$coef.NT) <- names(fit$se.coef.NT) <- colnames(XNTmat)}
   if (pT==1) {
-    names(fit$coef.T) <- names(fit$se.T) <- all.vars(formula.T)} else {
-      names(fit$coef.T) <- names(fit$se.T) <- colnames(XTmat)}
+    names(fit$coef.T) <- names(fit$se.coef.T) <- all.vars(formula.T)} else {
+      names(fit$coef.T) <- names(fit$se.coef.T) <- colnames(XTmat)}
   if (pOR==1) {
-    names(fit$coef.OR) <- names(fit$se.OR) <- all.vars(formula.OR)} else {
-      names(fit$coef.OR) <- names(fit$se.OR) <- colnames(XORmat)}
+    names(fit$coef.OR) <- names(fit$se.coef.OR) <- all.vars(formula.OR)} else {
+      names(fit$coef.OR) <- names(fit$se.coef.OR) <- colnames(XORmat)}
+  if (pInter==1) {
+    names(fit$coef.inter) <- names(fit$se.coef.inter) <- all.vars(formula.inter)} else {
+      names(fit$coef.inter) <- names(fit$se.coef.inter) <- paste0("NT-event:",colnames(XinterMat))}
+  names(fit$coef.inter)[1] <- names(fit$se.coef.inter)[1] <- "NT-event"
   class(fit) <- "LongitSC"
   fit
 }
