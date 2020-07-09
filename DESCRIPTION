@@ -2,7 +2,7 @@ Package: LongitSemiComp
 Title: BIVARIATE LONGITUDINAL ANALYSIS of SEMI COMPETING RISKS DATA
 Version: 0.1.1.9001
 Authors@R: person("Daniel", "Nevo", email = "danielnevo@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: This package implements the bivariate longitudinal analysis of semi-competing risks data developed in "Modeling semi-competing risks data as a longitudinal bivariate process" by Nevo Et al.  .
 Depends: MASS, R (>= 3.4.0)
 Imports: Rcpp, mgcv, numDeriv
 LinkingTo: Rcpp, RcppArmadillo
