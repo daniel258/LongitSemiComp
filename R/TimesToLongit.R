@@ -27,8 +27,11 @@
 #'@importFrom Rcpp evalCpp 
 #'@import MASS stats
 #' @export
-TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, TruncTime = NULL) # TruncTime is the time of entry to the study
+TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, HandleCens = c("Right", "Left", "NN"),
+                          TruncData = F, TruncTime = NULL, HandleTrunc = c("Left", "Right", "NN")) # TruncTime is the time of entry to the study
 {
+  HandleCens = match.arg(HandleCens)
+  HandleTrunc = match.arg(HandleTrunc)
   J <- length(inter.vec)-1
   YNT <- YT <- matrix(data = 0, nrow = length(T1), ncol = J)
   risk.T <- risk.NT <- matrix(data = 1, nrow = length(T1), ncol = J)
@@ -43,8 +46,46 @@ TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, Trunc
     {
       YT[i, inter.vec[-1]>=T2[i]] <- 1
     }
-  indexT1 <- findInterval(T1[i], inter.vec, rightmost.closed = T, left.open = T) + 1
-  indexT2 <- findInterval(T2[i], inter.vec, rightmost.closed = T, left.open = T) + 1
+  if(HandleCens=="Right")
+  {
+    indexT1 <- findInterval(T1[i], inter.vec, rightmost.closed = T, left.open = T) + 1
+    indexT2 <- findInterval(T2[i], inter.vec, rightmost.closed = T, left.open = T) + 1  
+  }
+  if(HandleCens=="Left")
+  {
+    indexT1 <- findInterval(T1[i], inter.vec, rightmost.closed = T, left.open = T)
+    indexT2 <- findInterval(T2[i], inter.vec, rightmost.closed = T, left.open = T)
+    if (delta2[i]==1) {
+      indexT2 <- indexT2 + 1
+      indexT1 <- indexT1 + 1
+      }
+    if (delta2[i]==0 &  delta1[i]==1 & indexT1 < indexT2) # If T1 before T2, and T2 censored, and not the same interval
+      {
+      indexT1 <- indexT1 + 1
+    }
+    if (delta2[i]==0 & T2[i]==inter.vec[J+1]) # censored at the end of the study
+    {
+      indexT2 <- indexT2 + 1
+      if(delta1[i]==0 | T1[i] > inter.vec[J])  # censored at the end of the study, or disease at the lat interval
+      {
+        indexT1 <- indexT1 + 1
+      }}
+  }
+  if(HandleCens=="NN")
+  {
+    indexT1 <- findInterval(T1[i], inter.vec, rightmost.closed = T, left.open = T)
+    indexT2 <- findInterval(T2[i], inter.vec, rightmost.closed = T, left.open = T)
+    if (delta2[i]==1) {
+      indexT1 <- indexT1 + 1
+      indexT2 <- indexT2 + 1
+    } else if (delta2[i]==0 &  delta1[i]==1) # If T1 before T2, and T2 censored.
+    {
+      indexT2 <- which.min(abs(T2[i] - inter.vec))  
+      indexT1 <- min(indexT1 + 1, indexT2)
+    } else { # delta2[i]=delta1[i]=0
+      indexT1 <- which.min(abs(T1[i] - inter.vec))
+      indexT2 <- which.min(abs(T2[i] - inter.vec))
+    }}
   if (indexT1<=J) {risk.NT[i, indexT1:J] <- 0}
   if (indexT2<=J)
       {
@@ -53,11 +94,19 @@ TimesToLongit <- function(T1,T2, delta1, delta2, inter.vec, TruncData = F, Trunc
       }
   if (TruncData == T)
   {
-  indexTrunc <- findInterval(TruncTime[i], inter.vec, rightmost.closed = T, left.open = T) - 1
-  if (indexTrunc > 1)
+  if (HandleTrunc=="Left"){
+    indexTrunc <- findInterval(TruncTime[i], inter.vec, rightmost.closed = T, left.open = F) - 1
+  } else if (HandleTrunc=="Right")
+  {
+  indexTrunc <- findInterval(TruncTime[i], inter.vec, rightmost.closed = F, left.open = T)
+  } else if (HandleTrunc=="NN")
+  {
+    indexTrunc <- which.min(abs(TruncTime[i] - inter.vec)) - 1
+  }
+  if (indexTrunc >= 1)
       {
-    risk.NT[i, 1:indexTrunc] <- 0
-    risk.T[i, 1:indexTrunc] <- 0
+      risk.NT[i, 1:indexTrunc] <- 0
+      risk.T[i, 1:indexTrunc] <- 0
       }
   }}
   return(list(YNT = YNT, YT = YT, risk.NT = risk.NT, risk.T = risk.T))
