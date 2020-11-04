@@ -107,12 +107,20 @@ LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T,
   {
     init <- rep(0.1,n.params)
   }
-  res.opt <- optim(par = init, fn = PenalLogLikTimeDep, gr = GradPenalLogLikTimeDep, 
+  res.opt <- tryCatch(optim(par = init, fn = PenalLogLikTimeDep, gr = GradPenalLogLikTimeDep, 
                    hessian = T, method = "L-BFGS-B", control = list(maxit = maxit.optim),
-                   YT = YT, YNT = YNT, TM = TM, ID = ID,
+                   YT = YT, YNT = YNT, TM = TM, ID = ID, 
                    XNT = XNTmat,  XT = XTmat, XOR = XORmat,
                    TimeBase = Bsplines, TimePen = S.penal, 
-                   lambda = lambda, epsOR = epsOR)
+                   lambda = lambda, epsOR = epsOR), error=function(e) {e})
+  if(inherits(res.opt, "error")){
+    res.opt <- optim(par = init, fn = PenalLogLikTimeDep, gr = GradPenalLogLikTimeDep, 
+                              hessian = T, method = "BFGS", control = list(maxit = maxit.optim),
+                              YT = YT, YNT = YNT, TM = TM, ID = ID, 
+                              XNT = XNTmat,  XT = XTmat, XOR = XORmat,
+                              TimeBase = Bsplines, TimePen = S.penal, 
+                              lambda = lambda, epsOR = epsOR)
+    }
   fit <- list()
   fit$formula.NT <- formula.NT
   fit$formula.T <- formula.T
@@ -128,14 +136,21 @@ LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T,
                          TimeBase = Bsplines, epsOR = epsOR, 
                          TimePen = S.penal, lambda = rep(0, 3)) # used for aic
   fit$hess.penal <- res.opt$hessian
-  fit$se.naive <- sqrt(diag(solve(res.opt$hessian)))
+  hess.inv <- tryCatch(solve(res.opt$hessian), error=function(e) {e})
+  err.hess.inv <- inherits(hess.inv, "error")
+  if(err.hess.inv){
+    hess.inv <- tryCatch(ginv(res.opt$hessian), error=function(e) {e})
+    err.hess.inv <- inherits(hess.inv, "error")}
+  if (!err.hess.inv)
+  {
+  fit$se.naive <- sqrt(diag(hess.inv))
   my.grad.sqrd <- GradPenalLogLikPersTimeDep(param = res.opt$par,
                                                YT = YT, YNT = YNT, TM = TM,  
                                                XNT = XNTmat,  XT = XTmat, XOR = XORmat,
                                                ID = ID,
                                                TimeBase = Bsplines, epsOR = epsOR, 
                                                TimePen = S.penal, lambda = rep(0,3))
-  fit$v.hat <- solve(res.opt$hessian)%*%my.grad.sqrd%*%(solve(res.opt$hessian))
+  fit$v.hat <- hess.inv%*%my.grad.sqrd%*%hess.inv
   fit$se.rob <- sqrt(diag(fit$v.hat))
   hess.no.penal <- numDeriv::jacobian(func = GradPenalLogLikTimeDep, x = res.opt$par, 
                                        YT = YT, YNT = YNT, TM = TM,  
@@ -147,7 +162,7 @@ LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T,
   if(!identical(dim(hess.no.penal), dim(res.opt$hessian))) {
     fit$df <- 0 # Indicates a problem
   } else {
-    fit$df <- sum(diag((hess.no.penal%*%solve(res.opt$hessian))))
+    fit$df <- sum(diag((hess.no.penal%*%hess.inv)))
   }
   fit$aic <- -2*fit$lik - 2*fit$df # lik is minus the log-likelihood without the peanlty
   fit$coef.longterm <-  fit$est[1]
@@ -187,6 +202,24 @@ LongitSCtimeDep <- function(times = NULL, data, formula.NT, formula.T,
   if (pOR==1) {
     names(fit$coef.OR) <- names(fit$se.rob.OR) <- all.vars(formula.OR)} else {
       names(fit$coef.OR) <- names(fit$se.rob.OR) <- colnames(XORmat)}
+  } else {
+    fit$coef.longterm <-  fit$est[1]
+    fit$time.int.NT <- expit(Bsplines%*%fit$est[2:(1 + Q)])
+    fit$time.int.T <- expit(Bsplines%*%fit$est[(1 + Q + 1):(1 + 2*Q)])
+    fit$time.int.OR <- exp(Bsplines%*%fit$est[(1 + 2*Q + 1):(1 + 3*Q)])
+    fit$coef.NT <- fit$est[(1 + 3*Q + 1):(1 + 3*Q + pNT)]
+    fit$coef.T <- fit$est[(1 + 3*Q + pNT + 1):(1 + 3*Q + pNT + pT)]
+    fit$coef.OR <- fit$est[(1 + 3*Q + pNT + pT + 1):(1 + 3*Q + pNT + pT + pOR)]
+    if (pNT==1) {
+      names(fit$coef.NT) <- all.vars(formula.NT)} else {
+        names(fit$coef.NT) <- colnames(XNTmat)}
+    if (pT==1) {
+      names(fit$coef.T) <-  all.vars(formula.T)} else {
+        names(fit$coef.T) <- colnames(XTmat)}
+    if (pOR==1) {
+      names(fit$coef.OR) <- all.vars(formula.OR)} else {
+        names(fit$coef.OR) <-  colnames(XORmat)}
+  } 
   class(fit) <- "LongitSC"
   fit
 }
