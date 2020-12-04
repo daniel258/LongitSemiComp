@@ -7,6 +7,10 @@
 #' @param delta1 Non-terminal event indicator (1: no-terminal event 0: censored)
 #' @param delta2 Terminal event indicator (1: no-terminal event 0: censored)
 #' @param inter.vec Partition points creating the interval.
+#' @param HandleCens How to handle within-interval right censoring (Section 3.2 of the paper). Right: anti-conservative
+#' Left: conservative. NN: nearest neighbor.
+#' @param HandleTrunc How to handle within-interval left truncation (Section 3.2 of the paper). Right: conservative
+#' Left: anti-conservative. NN: nearest neighbor.
 #' @param TruncData Logical. Is the data include left truncation?
 #' @param TruncTime Truncation time. Only used if TruncData==T
 #' @return A list with at-risk indicators for each unit in each interval (risk.NT and risk.T) and outcome data

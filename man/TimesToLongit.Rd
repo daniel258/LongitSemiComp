@@ -10,8 +10,10 @@ TimesToLongit(
   delta1,
   delta2,
   inter.vec,
+  HandleCens = c("Right", "Left", "NN"),
   TruncData = F,
-  TruncTime = NULL
+  TruncTime = NULL,
+  HandleTrunc = c("Left", "Right", "NN")
 )
 }
 \arguments{
@@ -25,9 +27,15 @@ TimesToLongit(
 
 \item{inter.vec}{Partition points creating the interval.}
 
+\item{HandleCens}{How to handle within-interval right censoring (Section 3.2 of the paper). Right: anti-conservative
+Left: conservative. NN: nearest neighbor.}
+
 \item{TruncData}{Logical. Is the data include left truncation?}
 
 \item{TruncTime}{Truncation time. Only used if TruncData==T}
+
+\item{HandleTrunc}{How to handle within-interval left truncation (Section 3.2 of the paper). Right: conservative
+Left: anti-conservative. NN: nearest neighbor.}
 }
 \value{
 A list with at-risk indicators for each unit in each interval (risk.NT and risk.T) and outcome data
